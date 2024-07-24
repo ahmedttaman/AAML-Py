@@ -47,21 +47,21 @@ def get_weekends(year, month):
 weekend_dates=get_weekends(2023, 12)
 
 
-import python_calamine
-from python_calamine import CalamineWorkbook
+# import python_calamine
+# from python_calamine import CalamineWorkbook
 
-workbook = CalamineWorkbook.from_path(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_19 May, 2024.xlsx")
-workbook.sheet_names
-# ["Sheet1", "Sheet2"]
+# workbook = CalamineWorkbook.from_path(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_19 May, 2024.xlsx")
+# workbook.sheet_names
+# # ["Sheet1", "Sheet2"]
 
-recs: list[list]=workbook.get_sheet_by_name("ِAll").to_python()
-ris1 = pd.DataFrame.from_records(recs)
+# recs: list[list]=workbook.get_sheet_by_name("ِAll").to_python()
+# ris1 = pd.DataFrame.from_records(recs)
 
 
-new_header = ris1.iloc[0] #grab the first row for the header
-ris1 = ris1[1:] #take the data less the header row
-ris1.columns = new_header
-ris2=ris1.head()
+# new_header = ris1.iloc[0] #grab the first row for the header
+# ris1 = ris1[1:] #take the data less the header row
+# ris1.columns = new_header
+# ris2=ris1.head()
 
 
 
@@ -86,7 +86,7 @@ Reading_price = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productiv
 
 #roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\JAN productivity-Final.xlsx")
 
-roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\March 2024-Productivity-2 June.xlsx")
+roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\March 2024-Productivity 10 June.xlsx")
 # roaster.columns=roaster.iloc[0]
 # roaster=roaster[1:]
 
@@ -110,7 +110,7 @@ northconsultant=['Dr. Fawzy Mohamed','Dr. Jaafar Abdul Rahman','Dr. Ahmed Ibrahi
 eduocationnormalize=.675
 monthworkdays=max(roaster2['No. of Workdays'])
 roaster2.loc[roaster2['Category']=="Consultant",'educations_hrs']=(roaster2['No. of Workdays']*educationhrs)/monthworkdays
-roaster2.loc[roaster2['Admin']==1,'admin_hrs']=roaster2['No. of Workdays']*8*.2
+roaster2.loc[roaster2['Admin']==1,'admin_hrs']=roaster2['No. of Workdays']*6*.2
 roaster2.fillna(0,inplace=True)
 roaster2.loc[roaster2['Name'].isin(northconsultant),'educations_hrs']=educationhrs/1.8
 roaster2['net_report_hrs']=roaster2.workhours-roaster2.educations_hrs -roaster2.admin_hrs
@@ -488,10 +488,10 @@ for radiologist in radioglist_list:
   #allapend3.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Weekend '+radiologist+'.xlsx', sheet_name = "All", index = False) 
   
   
-  i+=1
+  # i+=1
   
-  if i > 8: 
-    break
+  # if i > 8: 
+  #   break
   #  #if i > 50: 
   
   #     break
