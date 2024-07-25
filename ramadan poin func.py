@@ -31,20 +31,20 @@ from ramadan_func import *
 
 #############################master Tables
 
-import calendar
+# import calendar
 
-def get_weekends(year, month):
-    cal = calendar.Calendar(firstweekday=calendar.SUNDAY)
-    month_matrix = cal.monthdatescalendar(year, month)
+# def get_weekends(year, month):
+#     cal = calendar.Calendar(firstweekday=calendar.SUNDAY)
+#     month_matrix = cal.monthdatescalendar(year, month)
     
-    weekends = []
-    for week in month_matrix:
-        for day in week:
-            if day.weekday() == calendar.FRIDAY or day.weekday() == calendar.SATURDAY:
-                weekends.append(day)
+#     weekends = []
+#     for week in month_matrix:
+#         for day in week:
+#             if day.weekday() == calendar.FRIDAY or day.weekday() == calendar.SATURDAY:
+#                 weekends.append(day)
     
-    return weekends
-weekend_dates=get_weekends(2023, 12)
+#     return weekends
+# weekend_dates=get_weekends(2023, 12)
 
 
 # import python_calamine
