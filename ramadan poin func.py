@@ -367,7 +367,7 @@ for radiologist in radioglist_list:
   assisappend2=pd.concat([assisappend2,assis2],ignore_index=True, sort=False)
   
   
-  constest=ris_point.loc[(ris_point['Assistant']=='Dr. Sumaira Chauhdary')]
+  # constest=ris_point.loc[(ris_point['Assistant']=='Dr. Sumaira Chauhdary')]
   ris_point['SECTION_CODE'].value_counts()
   
   
@@ -490,8 +490,8 @@ for radiologist in radioglist_list:
   
   # i+=1
   
-  # if i > 8: 
-  #   break
+  # if i > 18: 
+  #     break
   #  #if i > 50: 
   
   #     break
@@ -500,20 +500,20 @@ fin.info()
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
 fin['Overtime']=0
 fin.loc[fin['day']=='WeekDay','Overtime']=fin['total_point']-fin['total_required_point']
-fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_FEB_22may.xlsx', sheet_name = "All", index = False)
-rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_Feb_22may.xlsx', sheet_name = "All", index = False)
+fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_MARCH_25July.xlsx', sheet_name = "All", index = False)
+rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_MARCH_25July.xlsx', sheet_name = "All", index = False)
 
 
-ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_jan2.xlsx', sheet_name = "All", index = False)
+ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_March.xlsx', sheet_name = "All", index = False)
 
-xx=ris_point.loc[ris_point['OPD'].isnull()]
-xx=ris_point.loc[ris_point['OPD 2024'].isnull()]
-xx=ris_point.loc[(ris_point['OPD 2024'].isnull())&(~ris_point['PROCEDURE_NAME'].isnull())]
-xx=ris_point.loc[(ris_point['OPD 2024'].isnull())&(~ris_point['PROCEDURE_NAME_Nicp'].isnull())]
+# xx=ris_point.loc[ris_point['OPD'].isnull()]
+# xx=ris_point.loc[ris_point['OPD 2024'].isnull()]
+# xx=ris_point.loc[(ris_point['OPD 2024'].isnull())&(~ris_point['PROCEDURE_NAME'].isnull())]
+# xx=ris_point.loc[(ris_point['OPD 2024'].isnull())&(~ris_point['PROCEDURE_NAME_Nicp'].isnull())]
 
-xxx=ris_point.loc[ris_point['SIGNER_Name2']=='Dr. Eman Abdelgadir']
+# xxx=ris_point.loc[ris_point['SIGNER_Name2']=='Dr. Eman Abdelgadir']
 
-ris_dec.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\InvoiceDec_data.xlsx', sheet_name = "All", index = False) 
+# ris_dec.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\InvoiceDec_data.xlsx', sheet_name = "All", index = False) 
 
     
     
