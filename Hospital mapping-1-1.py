@@ -15,7 +15,7 @@ import datetime as dt
 
 
 #############################master Tables
-Radiolgistnames = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ALL RADIOLOGOSITS MAPPED NAMES 15 May 24.xlsx")
+Radiolgistnames = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ALL RADIOLOGOSITS MAPPED NAMES 27 July.xlsx")
 Radiolgistnames.fillna(0,inplace=True)
 
 mapping = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Mapping\hospital mapping.xlsx")
@@ -31,8 +31,8 @@ pmah_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All Staff V 29 Apri
 
 
 ###################PMAH clen and compine data######################################
-phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Dec 23 to 01 Jun 24.xlsx")
-phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Dec 23 to 01 Jun 24.xlsx")
+phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Dec 23 to 27 Jul 24.xlsx")
+phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Dec 23 to 27 Jul 24.xlsx")
 phma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -197,7 +197,7 @@ pmah_notmappedradio=phah_all.loc[(phah_all['SIGNER_Name2'].isnull())&(phah_all['
 
 ############################KFMC read data#############################
 
-kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\MIA_Radiology_Monthly_May _20240602_1114.xlsx")
+kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__Admin 28 July_20240728_1032.xlsx")
 
 
 
@@ -403,7 +403,7 @@ Alia=kfmcrenamed.loc[(kfmcrenamed['SIGNER_Name']=='ALIYA IBRAHIM ALAWAJI')]
 ################################# ِAl Yamamh###################
 ####modality to sction group, admission type 
 
-alymamh = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah 30 may 2024.xlsx")
+alymamh = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Dec 28 jul  2024.xlsx")
 
 alym_proc_mapping = pd.read_excel(r"D:\AAML\CCC\Hospitals data\NAPHIS Imaging Procedures 25 AUG 23.xlsx",sheet_name="Imaging Procedure")
 
@@ -441,6 +441,8 @@ alymamh.loc[alymamh['Mod.'].str.contains('CT'),'contract_modality']="CT"
 alymamh.loc[alymamh['Mod.'].str.contains('RF'),'contract_modality']="X-Ray (Fluoro)"
 alymamh.loc[alymamh['Mod.'].str.contains('MR'),'contract_modality']="MRI"
 alymamh.loc[alymamh['Mod.'].str.contains('US'),'contract_modality']="US"
+alymamh.loc[alymamh['Description'].str.contains('Mammo',case=False),'contract_modality']="Mamo"
+
 
 # Nationality
 alymamh['Patient ID']=alymamh['Patient ID'].astype(str).str.split(pat=".").str[0]
@@ -519,7 +521,7 @@ noof=alymamhrenamed.loc[(alymamhrenamed['SIGNER_Name']=='DR NOOF ALENEZI')]
 ####modality to sction group, admission type 
 
 
-alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Alartawiah 30 May 2024.xlsx")
+alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Alartawiah 27 Jul 2024.xlsx")
 
 alartwiah.info()
 
@@ -622,7 +624,7 @@ Alartawyah_notmappedradio=alartwiahrenamed.loc[(alartwiahrenamed['SIGNER_Name2']
 ##### report status to study status 
 
 
-dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 DEC - 31 MAY.xlsx")
+dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 DEC - 28 JULY.xlsx")
 dwadme.info()
 
 dwadme['Patient ID']=dwadme['Patient ID'].astype(str).str.split(pat=".").str[0]
@@ -671,6 +673,7 @@ Radiolgistnames["Dawadmi"]=Radiolgistnames["Dawadmi"].str.upper().str.strip()
 Radiolgistnames.fillna(0,inplace=True)
 
 
+Radiolgistnames.drop_duplicates(subset=['Dawadmi'],inplace=True)
 
 dawadmerenamed["SIGNER_Name2"]=dawadmerenamed["SIGNER_Name"].map(Radiolgistnames[Radiolgistnames["Dawadmi"]!=0].set_index("Dawadmi")['Final unified list'])
 dawadmerenamed["Assigned Radiologist"]=dawadmerenamed["Assigned Radiologist"].map(Radiolgistnames[Radiolgistnames["Dawadmi"]!=0].set_index("Dawadmi")['Final unified list'])
@@ -716,7 +719,7 @@ dwadme_notmappedradio=dawadmerenamed.loc[(dawadmerenamed['SIGNER_Name2'].isnull(
 ##### report status to study status 
 
 
-zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 DEC - 31 MAY.xlsx")
+zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 DEC - 28 JULY.xlsx")
 zulfi.info()
 zulfi=zulfi.drop_duplicates(['Accession number'],keep="last")
 
@@ -805,7 +808,7 @@ zulfi_notmappedradio=zulfirenamed.loc[(zulfirenamed['SIGNER_Name2'].isnull())&(z
 ###############################    Majmmah
 
 
-majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 DEC - 31 MAY.xlsx")
+majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 DEC - 28 JULY.xlsx")
 
 
 
@@ -888,7 +891,7 @@ majmmahrenamed['Hospital']='Al Majmaah'
 
 ph_kf_yam_ar_dw_zu_mj= pd.concat([ph_kf_yam_ar_dw_zu, majmmahrenamed], ignore_index=True,axis=0)  
 # ph_kf_yam_ar_dw_zu_mj['PROCEDURE_END']=pd.to_datetime(ph_kf_yam_ar_dw_zu_mj['PROCEDURE_END'],errors="coerce")
-ph_kf_yam_ar_dw_zu_mj=ph_kf_yam_ar_dw_zu_mj.drop(['Days to Sched','DICTATION_DATE','Quality Element','Quality Priority','Quality User','Protocol Info','Quality Comment','Residents','Name','PROCEDURE_REMARK','REQUEST_NO','REQUEST_DOCTOR_LASTNAME','REQUEST_DOCTOR_FIRSTNAME','COREAD_DATE','Tech QA','Repeats','Sched Prod','Order Time','Order Date','Anesthesia','Phys Prod','Procedure.1','ChkIn DTTM','Check-in to Appt Time (min)','Check-in to Begin (min)','Addendum Note','Peer Review Comments','Peer Review Decision','Peer Review Instant','Peer Review Reviewer','Notes','Notes.1','Study Note',], axis=1)
+ph_kf_yam_ar_dw_zu_mj=ph_kf_yam_ar_dw_zu_mj.drop(['Days to Sched','DICTATION_DATE','Quality Element','Quality Priority','Quality User','Protocol Info','Quality Comment','Residents','Name','PROCEDURE_REMARK','REQUEST_NO','REQUEST_DOCTOR_LASTNAME','REQUEST_DOCTOR_FIRSTNAME','COREAD_DATE','Tech QA','Repeats','Sched Prod','Order Time','Order Date','Anesthesia','Phys Prod','ChkIn DTTM','Check-in to Appt Time (min)','Check-in to Begin (min)','Addendum Note','Peer Review Comments','Peer Review Decision','Peer Review Instant','Peer Review Reviewer','Notes','Notes.1','Study Note',], axis=1)
 
 ph_kf_yam_ar_dw_zu_mj.info()
 
