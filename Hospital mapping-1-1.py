@@ -23,6 +23,8 @@ mapping = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Mapping\hospital mapping.xl
 procduremapping_points = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\NPHIES Points System modified 21-4-2024.xlsx",sheet_name="KFMC to NICIP to NPHIES Mapping")
 
 pmah_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All Staff V 29 April.xlsx")
+alyma_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\All_Staff_August2024.xlsx")
+
 #procduremapping_points.info()
 
 
@@ -31,8 +33,8 @@ pmah_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All Staff V 29 Apri
 
 
 ###################PMAH clen and compine data######################################
-phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Dec 23 to 27 Jul 24.xlsx")
-phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Dec 23 to 27 Jul 24.xlsx")
+phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Dec 23 to 31 Jul 24.xlsx")
+phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Dec 23 to 31 Jul 24.xlsx")
 phma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -197,7 +199,7 @@ pmah_notmappedradio=phah_all.loc[(phah_all['SIGNER_Name2'].isnull())&(phah_all['
 
 ############################KFMC read data#############################
 
-kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__Admin 28 July_20240728_1032.xlsx")
+kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__July_2024.xlsx")
 
 
 
@@ -402,6 +404,137 @@ Alia=kfmcrenamed.loc[(kfmcrenamed['SIGNER_Name']=='ALIYA IBRAHIM ALAWAJI')]
 
 ################################# ِAl Yamamh###################
 ####modality to sction group, admission type 
+
+alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Jun Exam 27 jul.xlsx")
+alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Jun Reported 27 jul.xlsx")
+alyma_rawperformed.info()
+
+###  in performed but not in reported 
+
+alyma_rawperformed_w_duplic=alyma_rawperformed.loc[~alyma_rawperformed['PROCEDURE_KEY'] .isin( alyma_rawreported['PROCEDURE_KEY'])]
+
+alyma_combined=pd.concat([alyma_rawreported, alyma_rawperformed_w_duplic], ignore_index=True)
+
+alyma_combined=alyma_combined.loc[alyma_combined['PAT_FIRST_NAME']!='Test']
+
+alyma_combined=alyma_combined.loc[alyma_combined['PROCEDURE_STATUS_LONG']!='del']
+
+
+# phah_combined['PP_MISC_TEXT_22']=phah_combined['PP_MISC_TEXT_2'].astype(str).str.split(pat=".").str[0]
+
+# phah_combined['PP_MISC_TEXT_23']=pd.to_datetime(phah_combined['PP_MISC_TEXT_22'].str[:4]   +"-"+phah_combined['PP_MISC_TEXT_22'].str[4:6]  +"-"+   phah_combined['PP_MISC_TEXT_22'].str[6:8] +" "+   phah_combined['PP_MISC_TEXT_22'].str[8:10] +":"+   phah_combined['PP_MISC_TEXT_22'].str[10:12]+":"+   phah_combined['PP_MISC_TEXT_22'].str[-2:],errors='coerce')
+
+
+alyma_combined=pd.merge(alyma_combined,alyma_stafff,left_on='SIGNER_CODE',right_on='STAFF_MEMB_CODE',how='left')
+
+# To uncomment once the data for Assigned radiologist and coread is available
+#alyma_combined=pd.merge(alyma_combined,alyma_stafff,left_on='PERFORMING_DOCTOR',right_on='STAFF_MEMB_CODE',how='left')
+#alyma_combined=pd.merge(alyma_combined,alyma_stafff,left_on='COREADER_CODE',right_on='STAFF_MEMB_CODE',how='left')
+
+
+#phah_combined.rename(columns={'SIGNER_Name_x':'SIGNER_Name','SIGNER_Name_y':'Assigned Radiologist','SIGNER_Name':'Assistant'},inplace=True)
+
+# phah_combined["Assigned Radiologist"]=phah_combined["Assigned Radiologist"].str.upper().str.strip()
+
+
+# phah_combined["Assistant"]=phah_combined["Assistant"].str.upper().str.strip()
+
+
+
+
+## clean out of scope data
+
+# phah_combined=phah_combined[~phah_combined['SECTION_CODE'].isin(['CARM','IR'])]
+# phah_combined=phah_combined[~phah_combined['WORKPLACE_CODE'].isin(['US-IR'])]
+# phah_combined=phah_combined[~phah_combined['PROCEDURE_STATUS_LONG'].isin(['del'])]
+# phah_combined=phah_combined[~phah_combined['PROCEDURE_NAME'].str.contains('dental',case=False)]
+
+
+
+
+
+#alyma_combined['PD_MISC_NUMBER_1'].value_counts()
+
+
+# alyma_combined.loc[alyma_combined['PROCEDURE_STATUS_LONG']!='appr','PROCEDURE_STATUS']="Exam Ended"
+
+alyma_combined.loc[alyma_combined['PROCEDURE_STATUS_LONG']=='exam','PROCEDURE_STATUS']="Exam Ended"
+alyma_combined.loc[alyma_combined['PROCEDURE_STATUS_LONG']=='appr','PROCEDURE_STATUS']="Final"
+alyma_combined.loc[alyma_combined['PROCEDURE_STATUS_LONG']=='writ','PROCEDURE_STATUS']="Saved"
+#phah_combined['PD_MISC_NUMBER_1']=phah_combined['PD_MISC_NUMBER_1'].astype(str).str.split(pat=".").str[0]
+
+alyma_combined.loc[alyma_combined['PD_MISC_TEXT_1']=='SAU','PD_MISC_MFD_1_DESCRIPTION']="Saudi"
+
+alyma_combined.loc[alyma_combined['PD_MISC_TEXT_1']!='SAU','PD_MISC_MFD_1_DESCRIPTION']="Non Saudi"
+
+
+alyma_combined['Hospital']='Al Yamamah'
+
+
+
+alyma_combined.loc[(alyma_combined['SECTION_CODE']=='YAMMG'),'SECTION_CODE']="Mamo"
+alyma_combined.loc[alyma_combined['SECTION_CODE']=='YAMCT','SECTION_CODE']="CT" 
+alyma_combined.loc[alyma_combined['SECTION_CODE']=='YAMUS','SECTION_CODE']="US"   
+alyma_combined.loc[alyma_combined['SECTION_CODE']=='YAMMR','SECTION_CODE']="MRI"
+alyma_combined.loc[alyma_combined['SECTION_CODE']=='YAMRF','SECTION_CODE']="X-Ray (Fluoro)"# need more about carm in RF
+alyma_combined.loc[(alyma_combined['SECTION_CODE']=='YAMXR'),'SECTION_CODE']="X-Ray"
+
+
+
+alyma_combined['Age']=(datetime.today() - alyma_combined['PAT_BIRTH_DATE']).dt.days/365
+
+alyma_combined["SIGNER_Name"]=alyma_combined["SIGNER_Name"].str.upper().str.strip()
+
+
+
+Radiolgistnames["Yamamah"]=Radiolgistnames["Yamamah"].str.upper().str.strip()
+Radiolgistnames.fillna(0,inplace=True)
+
+
+alyma_combined["SIGNER_Name2"]=alyma_combined["SIGNER_Name"].map(Radiolgistnames[Radiolgistnames["Yamamah"]!=0].set_index("Yamamah")['Final unified list'])
+# phah_combined["Assigned Radiologist"]=phah_combined["Assigned Radiologist"].map(Radiolgistnames[Radiolgistnames["PMAH"]!=0].set_index("PMAH")['Final unified list'])
+# phah_combined["Assistant"]=phah_combined["Assistant"].map(Radiolgistnames[Radiolgistnames["PMAH"]!=0].set_index("PMAH")['Final unified list'])
+
+invest=alyma_combined.loc[(alyma_combined["SIGNER_Name2"]==0)|(alyma_combined["SIGNER_Name2"].isnull())]
+
+phah_combined['First Visit or Follow up?']="First Time"
+
+
+
+phah_all=phah_combined.drop_duplicates(subset=['PROCEDURE_KEY'], keep='first')
+
+
+procduremapping_pointspmh=procduremapping_points[['PMAH Examinations Names','NICIP Examination Name']]
+
+
+
+phah_all["PROCEDURE_NAME2"]=phah_all["PROCEDURE_NAME"]
+
+phah_all["PROCEDURE_NAME2"]=phah_all["PROCEDURE_NAME2"].str.upper()
+phah_all["PROCEDURE_NAME2"]=phah_all["PROCEDURE_NAME2"].apply(lambda x: x.replace(' ','') )
+procduremapping_pointspmh['PMAH Examinations Names']=procduremapping_pointspmh['PMAH Examinations Names'].astype(str)
+procduremapping_pointspmh['PMAH Examinations Names']=procduremapping_pointspmh['PMAH Examinations Names'].str.upper()
+procduremapping_pointspmh['PMAH Examinations Names']=procduremapping_pointspmh['PMAH Examinations Names'].apply(lambda x: x.replace(' ','') )
+
+procduremapping_pointspmh=procduremapping_pointspmh.drop_duplicates(['PMAH Examinations Names'])
+
+phah_all["PROCEDURE_NAME_Nicp"]=phah_all["PROCEDURE_NAME2"].map(procduremapping_pointspmh[procduremapping_pointspmh["PMAH Examinations Names"]!="nan"].set_index("PMAH Examinations Names")['NICIP Examination Name'])
+#phah_all["PROCEDURE_NAME_Nphes"]=phah_all["PROCEDURE_NAME"].map(procduremapping_pointspmh[procduremapping_pointspmh["PMAH Examinations Names"]!=""].set_index("PMAH Examinations Names")['NPHIES Examination Name'])
+
+phah_all.loc[phah_all['PROCEDURE_NAME2']=='NAN','PROCEDURE_NAME_Nicp']=" "
+phah_all['Anat Region']='Unknown'
+
+
+pmah_notmappedprocedires=phah_all.loc[phah_all['PROCEDURE_NAME_Nicp'].isnull()]['PROCEDURE_NAME'].value_counts().reset_index()
+
+pmah_notmappedradio=phah_all.loc[(phah_all['SIGNER_Name2'].isnull())&(phah_all['PROCEDURE_STATUS']=='Final')]['SIGNER_Name'].value_counts().reset_index()
+
+#phah_all.to_excel(r'D:\AAML\CCC\Hospitals data\PMAH\PMAH contract modalityall.xlsx', sheet_name = "modality", index = False) 
+
+
+
+
+
 
 alymamh = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Dec 28 jul  2024.xlsx")
 
@@ -624,7 +757,7 @@ Alartawyah_notmappedradio=alartwiahrenamed.loc[(alartwiahrenamed['SIGNER_Name2']
 ##### report status to study status 
 
 
-dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 DEC - 28 JULY.xlsx")
+dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 DEC - 1 AUG.xlsx")
 dwadme.info()
 
 dwadme['Patient ID']=dwadme['Patient ID'].astype(str).str.split(pat=".").str[0]
@@ -719,7 +852,7 @@ dwadme_notmappedradio=dawadmerenamed.loc[(dawadmerenamed['SIGNER_Name2'].isnull(
 ##### report status to study status 
 
 
-zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 DEC - 28 JULY.xlsx")
+zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 DEC - 1 AUG.xlsx")
 zulfi.info()
 zulfi=zulfi.drop_duplicates(['Accession number'],keep="last")
 
@@ -808,7 +941,7 @@ zulfi_notmappedradio=zulfirenamed.loc[(zulfirenamed['SIGNER_Name2'].isnull())&(z
 ###############################    Majmmah
 
 
-majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 DEC - 28 JULY.xlsx")
+majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 DEC - 1 AUG.xlsx")
 
 
 

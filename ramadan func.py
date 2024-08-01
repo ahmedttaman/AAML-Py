@@ -21,9 +21,9 @@ import datetime as dt
 Ramadan='3/10/2024'
 
 
-def exclusion(ris_point):
-    exclusion_dates=['2/22/2024','4/5/2024','4/6/2024','4/7/2024','4/8/2024','4/9/2024','4/10/2024','4/11/2024','4/12/2024','4/13/2024']
-    ris_point=ris_point.loc[~]
+# def exclusion(ris_point):
+#     exclusion_dates=['2/22/2024','4/5/2024','4/6/2024','4/7/2024','4/8/2024','4/9/2024','4/10/2024','4/11/2024','4/12/2024','4/13/2024']
+#     ris_point=ris_point.loc[~]
 
 
 
