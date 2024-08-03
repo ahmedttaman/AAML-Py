@@ -405,8 +405,8 @@ Alia=kfmcrenamed.loc[(kfmcrenamed['SIGNER_Name']=='ALIYA IBRAHIM ALAWAJI')]
 ################################# ِAl Yamamh###################
 ####modality to sction group, admission type 
 
-alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Jun Exam 27 jul.xlsx")
-alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Jun Reported 27 jul.xlsx")
+alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Aug Exam.xlsx")
+alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Aug Reported.xlsx")
 alyma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -497,126 +497,11 @@ alyma_combined["SIGNER_Name2"]=alyma_combined["SIGNER_Name"].map(Radiolgistnames
 
 invest=alyma_combined.loc[(alyma_combined["SIGNER_Name2"]==0)|(alyma_combined["SIGNER_Name2"].isnull())]
 
-phah_combined['First Visit or Follow up?']="First Time"
+alyma_combined['First Visit or Follow up?']="First Time"
 
 
 
-phah_all=phah_combined.drop_duplicates(subset=['PROCEDURE_KEY'], keep='first')
-
-
-procduremapping_pointspmh=procduremapping_points[['PMAH Examinations Names','NICIP Examination Name']]
-
-
-
-phah_all["PROCEDURE_NAME2"]=phah_all["PROCEDURE_NAME"]
-
-phah_all["PROCEDURE_NAME2"]=phah_all["PROCEDURE_NAME2"].str.upper()
-phah_all["PROCEDURE_NAME2"]=phah_all["PROCEDURE_NAME2"].apply(lambda x: x.replace(' ','') )
-procduremapping_pointspmh['PMAH Examinations Names']=procduremapping_pointspmh['PMAH Examinations Names'].astype(str)
-procduremapping_pointspmh['PMAH Examinations Names']=procduremapping_pointspmh['PMAH Examinations Names'].str.upper()
-procduremapping_pointspmh['PMAH Examinations Names']=procduremapping_pointspmh['PMAH Examinations Names'].apply(lambda x: x.replace(' ','') )
-
-procduremapping_pointspmh=procduremapping_pointspmh.drop_duplicates(['PMAH Examinations Names'])
-
-phah_all["PROCEDURE_NAME_Nicp"]=phah_all["PROCEDURE_NAME2"].map(procduremapping_pointspmh[procduremapping_pointspmh["PMAH Examinations Names"]!="nan"].set_index("PMAH Examinations Names")['NICIP Examination Name'])
-#phah_all["PROCEDURE_NAME_Nphes"]=phah_all["PROCEDURE_NAME"].map(procduremapping_pointspmh[procduremapping_pointspmh["PMAH Examinations Names"]!=""].set_index("PMAH Examinations Names")['NPHIES Examination Name'])
-
-phah_all.loc[phah_all['PROCEDURE_NAME2']=='NAN','PROCEDURE_NAME_Nicp']=" "
-phah_all['Anat Region']='Unknown'
-
-
-pmah_notmappedprocedires=phah_all.loc[phah_all['PROCEDURE_NAME_Nicp'].isnull()]['PROCEDURE_NAME'].value_counts().reset_index()
-
-pmah_notmappedradio=phah_all.loc[(phah_all['SIGNER_Name2'].isnull())&(phah_all['PROCEDURE_STATUS']=='Final')]['SIGNER_Name'].value_counts().reset_index()
-
-#phah_all.to_excel(r'D:\AAML\CCC\Hospitals data\PMAH\PMAH contract modalityall.xlsx', sheet_name = "modality", index = False) 
-
-
-
-
-
-
-alymamh = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Dec 28 jul  2024.xlsx")
-
-alym_proc_mapping = pd.read_excel(r"D:\AAML\CCC\Hospitals data\NAPHIS Imaging Procedures 25 AUG 23.xlsx",sheet_name="Imaging Procedure")
-
-alymamh=pd.merge(alymamh, alym_proc_mapping,left_on="Tamar Procedure Code",right_on="Code", how="left")
-alymamh.loc[alymamh['Description'].isnull(),'Description']=alymamh['Procedure Name']
-
-
-
-# alymamh.to_excel(r'D:\AAML\CCC\Hospitals data\alymamh'+datetime.today().strftime("%d %b, %Y")+'.xlsx', sheet_name = "All", index = False) 
-
-# # because I addedd the type means admission type manauly in the file 
-# alymamh = pd.read_excel(r"D:\AAML\CCC\Hospitals data\alymamh01 Feb, 2024.xlsx")
-
-
-alymamh=alymamh.drop_duplicates(['Accession'],keep="last")
-
-
-
-
-
-alymamh.info()
-
-alymamh=alymamh[alymamh['Status']!='Cancel']
-
-# mapping admission type 
-alymamh.loc[alymamh['Custom Field 1']=='Emergency','Type']="E"
-alymamh.loc[alymamh['Custom Field 1']=='OutPatient','Type']="O"
-alymamh.loc[alymamh['Custom Field 1']=='InPatient','Type']="I"
-
-
-# mapping modalitiy with contract
-alymamh.loc[alymamh['Mod.'].str.contains('DX'),'contract_modality']="X-Ray"
-alymamh.loc[alymamh['Mod.'].str.contains('CR'),'contract_modality']="X-Ray"
-alymamh.loc[alymamh['Mod.'].str.contains('CT'),'contract_modality']="CT"
-alymamh.loc[alymamh['Mod.'].str.contains('RF'),'contract_modality']="X-Ray (Fluoro)"
-alymamh.loc[alymamh['Mod.'].str.contains('MR'),'contract_modality']="MRI"
-alymamh.loc[alymamh['Mod.'].str.contains('US'),'contract_modality']="US"
-alymamh.loc[alymamh['Description'].str.contains('Mammo',case=False),'contract_modality']="Mamo"
-
-
-# Nationality
-alymamh['Patient ID']=alymamh['Patient ID'].astype(str).str.split(pat=".").str[0]
-
-alymamh.loc[alymamh['Patient ID'].str[0]=='1','Nationality']="Saudi"
-
-alymamh.loc[alymamh['Patient ID'].str[0]!='1','Nationality']="Non Saudi"
-
-
-
-alymamh.loc[~alymamh['Status'].str.contains('Final'),'Status']="Exam Ended"
-alymamh.loc[alymamh['Status'].str.contains('Final'),'Status']="Final"
-
-
-
-alymamh['Scan Datetime']=pd.to_datetime( alymamh['Date'].astype(str) + ' ' + alymamh['Time'].astype(str))
-
-#alymamh.loc[alymamh['Scan Datetime']=='Final','REPORT_VERIFICATION_DATE']=alymamh['Scan Datetime']
-
-#alymamh['Scan Datetime']=pd.to_datetime(alymamh['Scan Datetime'].str.replace('.','-'),dayfirst=True)
-alymamh['Age']=(datetime.today() - alymamh['Birth Date']).dt.days/365
-#alymamh['Age']=20
-alymamh['Description2']=alymamh['Description']
-
-
-alymamh['Accession']= 'ALYMAMH' + '_' + alymamh['Accession'].astype(str)
-alymamh['ID']= 'ALYMAMH' + '_' + alymamh['Patient ID'].astype(str)
-alymamhrenamed = alymamh.rename(columns=mapping.set_index('AlYamamh')['PMAH'].to_dict())
-alymamhrenamed = alymamhrenamed[alymamhrenamed.columns[alymamhrenamed.columns.isin (mapping['PMAH'])]]
-
-alymamhrenamed["SIGNER_Name"]=alymamhrenamed["SIGNER_Name"].str.upper().str.strip()
-
-alymamhrenamed["Assigned Radiologist"]=alymamhrenamed["Assigned Radiologist"].str.upper().str.strip()
-
-
-Radiolgistnames["Yamamah"]=Radiolgistnames["Yamamah"].str.upper().str.strip()
-Radiolgistnames.fillna(0,inplace=True)
-
-
-alymamhrenamed["SIGNER_Name2"]=alymamhrenamed["SIGNER_Name"].map(Radiolgistnames[Radiolgistnames["Yamamah"]!=0].set_index("Yamamah")['Final unified list'])
-alymamhrenamed["Assigned Radiologist"]=alymamhrenamed["Assigned Radiologist"].map(Radiolgistnames[Radiolgistnames["Yamamah"]!=0].set_index("Yamamah")['Final unified list'])
+alyma_combined2=alyma_combined.drop_duplicates(subset=['PROCEDURE_KEY'], keep='first')
 
 
 procduremapping_pointsdwadme=procduremapping_points[['NPHIES Examination Name','NICIP Examination Name']]
@@ -628,33 +513,56 @@ procduremapping_pointsdwadme['NPHIES Examination Name']=procduremapping_pointsdw
 procduremapping_pointsdwadme=procduremapping_pointsdwadme.drop_duplicates(['NPHIES Examination Name'])
 
 
-alymamhrenamed["PROCEDURE_NAME2"]=alymamhrenamed["PROCEDURE_NAME"]
 
-alymamhrenamed["PROCEDURE_NAME2"]=alymamhrenamed["PROCEDURE_NAME2"].astype(str).str.upper()
-alymamhrenamed["PROCEDURE_NAME2"]=alymamhrenamed["PROCEDURE_NAME2"].apply(lambda x: x.replace(' ','') )
+alyma_combined2["PROCEDURE_NAME2"]=alyma_combined2["PROCEDURE_NAME"]
 
-alymamhrenamed["PROCEDURE_NAME_Nicp"]=alymamhrenamed["PROCEDURE_NAME2"].map(procduremapping_pointsdwadme[procduremapping_pointsdwadme['NPHIES Examination Name']!="nan"].set_index('NPHIES Examination Name')['NICIP Examination Name'])
+alyma_combined2["PROCEDURE_NAME2"]=alyma_combined2["PROCEDURE_NAME2"].astype(str).str.upper()
+alyma_combined2["PROCEDURE_NAME2"]=alyma_combined2["PROCEDURE_NAME2"].apply(lambda x: x.replace(' ','') )
 
-alymamhrenamed.loc[alymamhrenamed['PROCEDURE_NAME2']=='NAN','PROCEDURE_NAME_Nicp']=" "
+alyma_combined2["PROCEDURE_NAME_Nicp"]=alyma_combined2["PROCEDURE_NAME2"].map(procduremapping_pointsdwadme[procduremapping_pointsdwadme['NPHIES Examination Name']!="nan"].set_index('NPHIES Examination Name')['NICIP Examination Name'])
+
+alyma_combined2.loc[alyma_combined2['PROCEDURE_NAME2']=='NAN','PROCEDURE_NAME_Nicp']=" "
 
 
 
-alymamhrenamed['Hospital']='Al Yamamah'
+alyma_combined2['PROCEDURE_KEY']= 'ALYMAMH' + '_' + alyma_combined2['PROCEDURE_KEY'].astype(str)
+alyma_combined2['PD_MISC_NUMBER_1']= 'ALYMAMH' + '_' + alyma_combined2['PD_MISC_NUMBER_1'].astype(str)
 
-phah_kfmc_yamamh= pd.concat([phah_kfmc_combined, alymamhrenamed], ignore_index=True,axis=0)  
+alyma_combined2_notmappedprocedires=alyma_combined2.loc[alyma_combined2['PROCEDURE_NAME_Nicp'].isnull()]['PROCEDURE_NAME'].value_counts().reset_index()
+
+alyma_combined2_notmappedradio=alyma_combined2.loc[(alyma_combined2['SIGNER_Name2'].isnull())&(alyma_combined2['PROCEDURE_STATUS']=='Final')]['SIGNER_Name'].value_counts().reset_index()
+
+alyma_combined2['Hospital']='Al Yamamah'
+#phah_all.to_excel(r'D:\AAML\CCC\Hospitals data\PMAH\PMAH contract modalityall.xlsx', sheet_name = "modality", index = False) 
+
+old_alyma = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Alyamamh_OldRis_03 Aug, 2024.xlsx")
+
+alyma_all= pd.concat([alyma_combined2, old_alyma], ignore_index=True,axis=0)  
+ax=alyma_all['PROCEDURE_KEY'].duplicated()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+phah_kfmc_yamamh= pd.concat([phah_kfmc_combined, alyma_all], ignore_index=True,axis=0)  
 
 #phah_kfmc_yamamh.to_excel(r'D:\AAML\CCC\Hospitals data\phah_kfmc_ymamh'+datetime.today().strftime("%d %b, %Y")+'.xlsx', sheet_name = "All", index = False) 
-Alymamh_notmappedprocedires=alymamhrenamed.loc[alymamhrenamed['PROCEDURE_NAME_Nicp'].isnull()]['PROCEDURE_NAME'].value_counts().reset_index()
-
-Alymamh_notmappedradio=alymamhrenamed.loc[(alymamhrenamed['SIGNER_Name2'].isnull())&(alymamhrenamed['PROCEDURE_STATUS']=='Final')]['SIGNER_Name'].value_counts().reset_index()
-noof=alymamhrenamed.loc[(alymamhrenamed['SIGNER_Name']=='DR NOOF ALENEZI')]
 
 
 ################################# ِAl Yamamh###################
 ####modality to sction group, admission type 
 
 
-alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Alartawiah 27 Jul 2024.xlsx")
+alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Alartawiah Aug 2024.xlsx")
 
 alartwiah.info()
 

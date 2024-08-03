@@ -28,7 +28,7 @@ pmah_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All Staff V 29 Apri
 
 
 
-alymamh = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Dec 28 jul  2024.xlsx")
+alymamh = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Old RIS 0308  2024.xlsx")
 
 alym_proc_mapping = pd.read_excel(r"D:\AAML\CCC\Hospitals data\NAPHIS Imaging Procedures 25 AUG 23.xlsx",sheet_name="Imaging Procedure")
 
@@ -98,7 +98,7 @@ alymamh['Description2']=alymamh['Description']
 
 alymamh['Accession']= 'ALYMAMH' + '_' + alymamh['Accession'].astype(str)
 alymamh['ID']= 'ALYMAMH' + '_' + alymamh['Patient ID'].astype(str)
-alymamhrenamed = alymamh.rename(columns=mapping.set_index('AlYamamh')['PMAH'].to_dict())
+alymamhrenamed = alymamh.rename(columns=mapping.set_index('AlYamamh_old')['PMAH'].to_dict())
 alymamhrenamed = alymamhrenamed[alymamhrenamed.columns[alymamhrenamed.columns.isin (mapping['PMAH'])]]
 
 alymamhrenamed["SIGNER_Name"]=alymamhrenamed["SIGNER_Name"].str.upper().str.strip()
@@ -106,12 +106,12 @@ alymamhrenamed["SIGNER_Name"]=alymamhrenamed["SIGNER_Name"].str.upper().str.stri
 alymamhrenamed["Assigned Radiologist"]=alymamhrenamed["Assigned Radiologist"].str.upper().str.strip()
 
 
-Radiolgistnames["Yamamah"]=Radiolgistnames["Yamamah"].str.upper().str.strip()
+Radiolgistnames["Old_Yamamah"]=Radiolgistnames["Old_Yamamah"].str.upper().str.strip()
 Radiolgistnames.fillna(0,inplace=True)
 
 
-alymamhrenamed["SIGNER_Name2"]=alymamhrenamed["SIGNER_Name"].map(Radiolgistnames[Radiolgistnames["Yamamah"]!=0].set_index("Yamamah")['Final unified list'])
-alymamhrenamed["Assigned Radiologist"]=alymamhrenamed["Assigned Radiologist"].map(Radiolgistnames[Radiolgistnames["Yamamah"]!=0].set_index("Yamamah")['Final unified list'])
+alymamhrenamed["SIGNER_Name2"]=alymamhrenamed["SIGNER_Name"].map(Radiolgistnames[Radiolgistnames["Old_Yamamah"]!=0].set_index("Old_Yamamah")['Final unified list'])
+alymamhrenamed["Assigned Radiologist"]=alymamhrenamed["Assigned Radiologist"].map(Radiolgistnames[Radiolgistnames["Old_Yamamah"]!=0].set_index("Old_Yamamah")['Final unified list'])
 
 
 procduremapping_pointsdwadme=procduremapping_points[['NPHIES Examination Name','NICIP Examination Name']]
@@ -136,7 +136,7 @@ alymamhrenamed.loc[alymamhrenamed['PROCEDURE_NAME2']=='NAN','PROCEDURE_NAME_Nicp
 
 alymamhrenamed['Hospital']='Al Yamamah'
 
-alymamhrenamed.to_excel(r'D:\AAML\CCC\Hospitals data\AlYamamh\Alyamamh_OldRis_50624.xlsx', sheet_name = "All", index = False) 
+alymamhrenamed.to_excel(r'D:\AAML\CCC\Hospitals data\AlYamamh\Alyamamh_OldRis_'+datetime.today().strftime("%d %b, %Y")+'.xlsx', sheet_name = "All", index = False) 
 
 
 
