@@ -479,6 +479,8 @@ alyma_combined.loc[alyma_combined['SECTION_CODE']=='YAMMR','SECTION_CODE']="MRI"
 alyma_combined.loc[alyma_combined['SECTION_CODE']=='YAMRF','SECTION_CODE']="X-Ray (Fluoro)"# need more about carm in RF
 alyma_combined.loc[(alyma_combined['SECTION_CODE']=='YAMXR'),'SECTION_CODE']="X-Ray"
 
+alyma_combined.loc[(alyma_combined['ADMISSION_TYPE']=='A'),'ADMISSION_TYPE']="O"
+alyma_combined.loc[(alyma_combined['ADMISSION_TYPE'].isin(['S','P','V'])),'ADMISSION_TYPE']="I"
 
 
 alyma_combined['Age']=(datetime.today() - alyma_combined['PAT_BIRTH_DATE']).dt.days/365
@@ -610,7 +612,6 @@ alartwiah['Age']=(datetime.today() - alartwiah['Birth Date']).dt.days/365
 alartwiahrenamed = alartwiah.rename(columns=mapping.set_index('AlArtwiah')['PMAH'].to_dict())
 
 alartwiahrenamed = alartwiahrenamed[alartwiahrenamed.columns[alartwiahrenamed.columns.isin (mapping['PMAH'])]]
-Radiolgistnames.fillna(0,inplace=True)
 
 
 
@@ -714,7 +715,7 @@ Radiolgistnames["Dawadmi"]=Radiolgistnames["Dawadmi"].str.upper().str.strip()
 Radiolgistnames.fillna(0,inplace=True)
 
 
-Radiolgistnames.drop_duplicates(subset=['Dawadmi'],inplace=True)
+#Radiolgistnames.drop_duplicates(subset=['Dawadmi'],inplace=True)
 
 dawadmerenamed["SIGNER_Name2"]=dawadmerenamed["SIGNER_Name"].map(Radiolgistnames[Radiolgistnames["Dawadmi"]!=0].set_index("Dawadmi")['Final unified list'])
 dawadmerenamed["Assigned Radiologist"]=dawadmerenamed["Assigned Radiologist"].map(Radiolgistnames[Radiolgistnames["Dawadmi"]!=0].set_index("Dawadmi")['Final unified list'])
