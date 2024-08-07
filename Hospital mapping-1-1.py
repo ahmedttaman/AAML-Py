@@ -15,14 +15,14 @@ import datetime as dt
 
 
 #############################master Tables
-Radiolgistnames = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ALL RADIOLOGOSITS MAPPED NAMES 27 July.xlsx")
+Radiolgistnames = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ALL RADIOLOGOSITS MAPPED NAMES August.xlsx")
 Radiolgistnames.fillna(0,inplace=True)
 
 mapping = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Mapping\hospital mapping.xlsx")
 
 procduremapping_points = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\NPHIES Points System modified 21-4-2024.xlsx",sheet_name="KFMC to NICIP to NPHIES Mapping")
 
-pmah_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All Staff V 29 April.xlsx")
+pmah_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All Staff 6 August .xlsx")
 alyma_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\All_Staff_August2024.xlsx")
 
 #procduremapping_points.info()
@@ -264,6 +264,10 @@ kfmc.loc[(kfmc['Category'].str.contains('NM'))&(kfmc['Procedure'].str.contains('
 kfmc.loc[(kfmc['Category'].str.contains('NM'))&(kfmc['contract_modality']=='Null'),'contract_modality']="Other NM"
 kfmc.loc[kfmc['Category']=='IMG US PROCEDURES','contract_modality']="US"
 kfmc.loc[kfmc['Category']=='IMG XR PROCEDURES','contract_modality']="X-Ray"
+kfmc=kfmc[~kfmc.Modality.str.contains('arm',case=False,na=False)]
+kfmc=kfmc[~kfmc['Signing Physicians'].str.contains('Almashouq, Taghrid',case=False,na=False)]
+
+
 ##############outside
 
 kfmc.loc[(kfmc['Procedure'].str.contains('OUTSIDE',case=False))&(kfmc['Procedure'].str.contains('CT')),'contract_modality']="CT"
@@ -281,6 +285,7 @@ kfmc.loc[(kfmc['Procedure'].str.contains('OUTSIDE',case=False))&(kfmc['Procedure
 
 
 kfmc=kfmc[~kfmc['Procedure'].str.contains('ANGIOGRAM DONE OUTSIDE')]
+
 
 
 # Radiolgistnames.Category.value_counts()
@@ -398,6 +403,8 @@ phah_kfmc_combined= pd.concat([phah_all, kfmcrenamed], ignore_index=True,axis=0)
 kfmc_notmappedradio=kfmcrenamed.loc[(kfmcrenamed['SIGNER_Name2'].isnull())&(kfmcrenamed['PROCEDURE_STATUS']=='Final')]['SIGNER_Name'].value_counts().reset_index()
 
 Alia=kfmcrenamed.loc[(kfmcrenamed['SIGNER_Name']=='ALIYA IBRAHIM ALAWAJI')]
+
+Outsid final and there is no signer name 
 
 
 
@@ -682,7 +689,7 @@ dwadme=dwadme.drop_duplicates(['Accession number'],keep="last")
 dwadme.loc[dwadme['Modality type']=='MG','Modality type']="Mamo"
 dwadme.loc[dwadme['Modality type']=='MR','Modality type']="MRI"
 dwadme.loc[dwadme['Modality type']=='DX','Modality type']="X-Ray"
-dwadme.loc[dwadme['Modality type']=='RF','Modality type']="X-Ray (Fluoro)"
+dwadme.loc[dwadme['Modality type'].str.contains('RF'),'Modality type']="X-Ray (Fluoro)"
 dwadme.loc[dwadme['Modality type']=='BMD','Modality type']="X-Ray (BMD)"
 dwadme.loc[dwadme['Modality type'].str.contains('CT'),'Modality type']="CT"
 dwadme.loc[dwadme['Modality type'].str.contains('CR'),'Modality type']="X-Ray"
@@ -690,8 +697,10 @@ dwadme.loc[dwadme['Modality type'].str.contains('CR'),'Modality type']="X-Ray"
 dwadme['Procedure name2']=dwadme['Procedure name']
 
 
-dwadme.loc[dwadme['Report available']=='Report available','Report status']="Final"
-dwadme.loc[dwadme['Report available']!='Report available','Report status']="Exam End"
+
+dwadme.loc[dwadme['Report available']!='Report available','Report status']="Exam Ended"
+dwadme.loc[dwadme['Report status']=='Validated','Report status']="Final"
+dwadme.loc[dwadme['Report status']=='Preliminary','Report status']="Prelim"
 
 dwadme['Accession number']= 'AlDawadmi' + '_' + dwadme['Accession number'].astype(str)
 #dwadme['Patient ID']= 'AlDawadmi' + '_' + dwadme['Patient ID'].astype(str)
@@ -784,8 +793,10 @@ zulfi.loc[zulfi['Modality type']=='BMD','Modality type']="X-Ray (BMD)"
 zulfi['Procedure name2']=zulfi['Procedure name']
 
 
-zulfi.loc[zulfi['Report available']!='Report available','Report status']="Exam End"
-zulfi.loc[zulfi['Report available']=='Report available','Report status']="Final"
+zulfi.loc[zulfi['Report available']!='Report available','Report status']="Exam Ended"
+zulfi.loc[zulfi['Report status']=='Validated','Report status']="Final"
+zulfi.loc[zulfi['Report status']=='Preliminary','Report status']="Prelim"
+
 
 zulfi['Accession number']= 'Alzulfi' + '_' + zulfi['Accession number'].astype(str)
 zulfi['Patient ID']= 'Alzulfi' + '_' + zulfi['Patient ID'].astype(str)
@@ -875,8 +886,10 @@ majmmah.loc[majmmah['Modality type'].str.contains('RF'),'Modality type']="X-Ray 
 majmmah['Procedure name2']=majmmah['Procedure name']
 
 
-majmmah.loc[majmmah['Report available']!='Report available','Report status']="Exam End"
-majmmah.loc[majmmah['Report available']=='Report available','Report status']="Final"
+majmmah.loc[majmmah['Report available']!='Report available','Report status']="Exam Ended"
+majmmah.loc[majmmah['Report status']=='Validated','Report status']="Final"
+majmmah.loc[majmmah['Report status']=='Preliminary','Report status']="Prelim"
+
 
 majmmah['Accession number']= 'Almajmah' + '_' + majmmah['Accession number'].astype(str)
 majmmah['Patient ID']= 'Almajmah' + '_' + majmmah['Patient ID'].astype(str)
