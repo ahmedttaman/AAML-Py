@@ -33,8 +33,8 @@ alyma_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\All_Staff_Augu
 
 
 ###################PMAH clen and compine data######################################
-phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Dec 23 to 31 Jul 24.xlsx")
-phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Dec 23 to 31 Jul 24.xlsx")
+phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Dec 23 to 10 Aug 24.xlsx")
+phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Dec 23 to 10 Aug 24.xlsx")
 phma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -199,7 +199,7 @@ pmah_notmappedradio=phah_all.loc[(phah_all['SIGNER_Name2'].isnull())&(phah_all['
 
 ############################KFMC read data#############################
 
-kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__July_2024.xlsx")
+kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__Admin_12 Aug _20240812_1124.xlsx")
 
 
 
@@ -412,8 +412,8 @@ Outsid final and there is no signer name
 ################################# ِAl Yamamh###################
 ####modality to sction group, admission type 
 
-alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Aug Exam.xlsx")
-alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Aug Reported.xlsx")
+alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Aug Exam 12 August.xlsx")
+alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Aug Reported 12 August.xlsx")
 alyma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -544,7 +544,7 @@ alyma_combined2_notmappedradio=alyma_combined2.loc[(alyma_combined2['SIGNER_Name
 alyma_combined2['Hospital']='Al Yamamah'
 #phah_all.to_excel(r'D:\AAML\CCC\Hospitals data\PMAH\PMAH contract modalityall.xlsx', sheet_name = "modality", index = False) 
 
-old_alyma = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Alyamamh_OldRis_03 Aug, 2024.xlsx")
+old_alyma = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Alyamamh_OldRis_12 Aug, 2024.xlsx")
 
 alyma_all= pd.concat([alyma_combined2, old_alyma], ignore_index=True,axis=0)  
 ax=alyma_all['PROCEDURE_KEY'].duplicated()
@@ -571,7 +571,7 @@ phah_kfmc_yamamh= pd.concat([phah_kfmc_combined, alyma_all], ignore_index=True,a
 ####modality to sction group, admission type 
 
 
-alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Alartawiah Aug 2024.xlsx")
+alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Alartawiah 11 Aug 2024.xlsx")
 
 alartwiah.info()
 
@@ -673,7 +673,7 @@ Alartawyah_notmappedradio=alartwiahrenamed.loc[(alartwiahrenamed['SIGNER_Name2']
 ##### report status to study status 
 
 
-dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 DEC - 1 AUG.xlsx")
+dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 DEC - 11 AUG.xlsx")
 dwadme.info()
 
 dwadme['Patient ID']=dwadme['Patient ID'].astype(str).str.split(pat=".").str[0]
@@ -770,7 +770,7 @@ dwadme_notmappedradio=dawadmerenamed.loc[(dawadmerenamed['SIGNER_Name2'].isnull(
 ##### report status to study status 
 
 
-zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 DEC - 1 AUG.xlsx")
+zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 DEC - 11 AUG.xlsx")
 zulfi.info()
 zulfi=zulfi.drop_duplicates(['Accession number'],keep="last")
 
@@ -861,7 +861,7 @@ zulfi_notmappedradio=zulfirenamed.loc[(zulfirenamed['SIGNER_Name2'].isnull())&(z
 ###############################    Majmmah
 
 
-majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 DEC - 1 AUG.xlsx")
+majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 DEC - 11 AUG.xlsx")
 
 
 

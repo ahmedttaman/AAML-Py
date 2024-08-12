@@ -13,10 +13,11 @@ from datetime import datetime, date
 import os
 import datetime as dt
 
+#Raa = pd.read_csv (r"C:\Users\Ahmad\Desktop\240 # New Monday.csv")
 
 
 #############################master Tables
-Radiolgistnames = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ALL RADIOLOGOSITS MAPPED NAMES 27 July.xlsx")
+Radiolgistnames = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ALL RADIOLOGOSITS MAPPED NAMES August.xlsx")
 Radiolgistnames.fillna(0,inplace=True)
 
 mapping = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Mapping\hospital mapping.xlsx")
@@ -28,7 +29,7 @@ pmah_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All Staff V 29 Apri
 
 
 
-alymamh = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Old RIS 0308  2024.xlsx")
+alymamh = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah old ris 10 august.xlsx")
 
 alym_proc_mapping = pd.read_excel(r"D:\AAML\CCC\Hospitals data\NAPHIS Imaging Procedures 25 AUG 23.xlsx",sheet_name="Imaging Procedure")
 
