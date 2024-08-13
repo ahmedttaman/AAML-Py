@@ -17,51 +17,51 @@ import numpy as np
 from datetime import datetime, date
 import os
 import datetime as dt
-from Point_functions import *
+from ramadan_func import *
 
 
 
 
 #############################master Tables
 
-import calendar
+# import calendar
 
-def get_weekends(year, month):
-    cal = calendar.Calendar(firstweekday=calendar.SUNDAY)
-    month_matrix = cal.monthdatescalendar(year, month)
+# def get_weekends(year, month):
+#     cal = calendar.Calendar(firstweekday=calendar.SUNDAY)
+#     month_matrix = cal.monthdatescalendar(year, month)
     
-    weekends = []
-    for week in month_matrix:
-        for day in week:
-            if day.weekday() == calendar.FRIDAY or day.weekday() == calendar.SATURDAY:
-                weekends.append(day)
+#     weekends = []
+#     for week in month_matrix:
+#         for day in week:
+#             if day.weekday() == calendar.FRIDAY or day.weekday() == calendar.SATURDAY:
+#                 weekends.append(day)
     
-    return weekends
-weekend_dates=get_weekends(2023, 12)
+#     return weekends
+# weekend_dates=get_weekends(2023, 12)
 
 
-import python_calamine
-from python_calamine import CalamineWorkbook
+# import python_calamine
+# from python_calamine import CalamineWorkbook
 
-workbook = CalamineWorkbook.from_path(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_19 May, 2024.xlsx")
-workbook.sheet_names
-# ["Sheet1", "Sheet2"]
+# workbook = CalamineWorkbook.from_path(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_19 May, 2024.xlsx")
+# workbook.sheet_names
+# # ["Sheet1", "Sheet2"]
 
-recs: list[list]=workbook.get_sheet_by_name("ِAll").to_python()
-ris1 = pd.DataFrame.from_records(recs)
+# recs: list[list]=workbook.get_sheet_by_name("ِAll").to_python()
+# ris1 = pd.DataFrame.from_records(recs)
 
 
-new_header = ris1.iloc[0] #grab the first row for the header
-ris1 = ris1[1:] #take the data less the header row
-ris1.columns = new_header
-ris2=ris1.head()
+# new_header = ris1.iloc[0] #grab the first row for the header
+# ris1 = ris1[1:] #take the data less the header row
+# ris1.columns = new_header
+# ris2=ris1.head()
 
 
 
 
 #ris = pd.read_csv(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj19 Feb, 2024.csv")
 ris1 = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_22 May, 2024.xlsx")
-invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - February 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
+#invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - February 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
 #invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - January 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
 
 
@@ -75,11 +75,11 @@ point_map = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\
 Reading_price = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Reading Fee_ Jan.24 Invoice v1.xlsx",sheet_name="Reading_Master")
 
 
-#roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\Dec.2023-Productivity-FINAL.xlsx")
+roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\Dec.2023-Productivity-FINAL.xlsx")
 
 #roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\JAN productivity-Final.xlsx")
 
-roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\FEB 2024 PRODUCTIVITY-Final.xlsx")
+#roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\FEB 2024 PRODUCTIVITY-Final.xlsx")
 # roaster.columns=roaster.iloc[0]
 # roaster=roaster[1:]
 
@@ -94,7 +94,7 @@ roaster['TOTAL ACTIVITIES']=roaster['TOTAL ACTIVITIES'].apply(lambda x: x if x >
 roaster['workhours']=(roaster['No. of Workdays']*8)-roaster['TOTAL ACTIVITIES']
 Radiolgistnames = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ALL RADIOLOGOSITS MAPPED NAMES 15 May 24.xlsx")
 roaster2=pd.merge(roaster, Radiolgistnames,left_on=roaster['Name'].str.upper().apply(lambda x: x.replace(' ','')),right_on=Radiolgistnames['Final unified list'].astype(str).str.upper().apply(lambda x: x.replace(' ','')),how="left")
-
+roaster2=roaster2.drop(['key_0'],axis=1)
 roaster2=roaster2.iloc[: , :-9]
 educationhrs=56
 northconsultant=['Dr. Fawzy Mohamed','Dr. Jaafar Abdul Rahman','Dr. Ahmed Ibrahim Abdel Aal','Dr. Ehab Ali Ahmed']
@@ -153,19 +153,19 @@ ris['REPORT_VERIFICATION_DATE']=pd.to_datetime(ris['REPORT_VERIFICATION_DATE'],e
 
 startstr='12/01/23 00:00:01'
 start = datetime.strptime(startstr, '%m/%d/%y %H:%M:%S')
-endstr='2/29/24 23:59:59'
+endstr='12/31/23 23:59:59'
 end = datetime.strptime(endstr, '%m/%d/%y %H:%M:%S')
 ris.loc[ris['Hospital']=='Al Artaweyyah','PROCEDURE_KEY']=ris['PROCEDURE_KEY'].str.replace('.0','')
 
-ris_dec=ris.loc[ris['PROCEDURE_KEY'].isin(invoice['Acc_hospital'])]
-invtest=invoice.loc[~invoice['Acc_hospital'].isin(ris['PROCEDURE_KEY'])].dropna()
+#ris_dec=ris.loc[ris['PROCEDURE_KEY'].isin(invoice['Acc_hospital'])]
+#invtest=invoice.loc[~invoice['Acc_hospital'].isin(ris['PROCEDURE_KEY'])].dropna()
 ris['Hospital'].value_counts()
 
 
 
 
 # ris_dec=ris.loc[(ris['PROCEDURE_END'].between(start,end))]
-#ris_dec=ris.loc[(ris['PROCEDURE_END'].between(start,end))&(ris['REPORT_VERIFICATION_DATE'].between(start,end))]
+ris_dec=ris.loc[(ris['PROCEDURE_END'].between(start,end))&(ris['REPORT_VERIFICATION_DATE'].between(start,end))]
 
 ris_dec.loc[(ris_dec['SIGNER_Name2']=='AHMAD ADNAN MOHAMMED ALDEREIHIM'),'SIGNER_Name2']='AHMED IBRAHIM ALDRAIHEM'
 
@@ -353,7 +353,6 @@ for radiologist in radioglist_list:
   assisappend2=pd.concat([assisappend2,assis2],ignore_index=True, sort=False)
   
   
-  constest=ris_point.loc[(ris_point['Assistant']=='Dr. Sumaira Chauhdary')]
   ris_point['SECTION_CODE'].value_counts()
   
   
@@ -362,8 +361,7 @@ for radiologist in radioglist_list:
   
   
   
-
-  #print(len(roasterradio.iloc[0, 9]))
+ #print(len(roasterradio.iloc[0, 9]))
   if ((len(roasterradio)>0)):
       allapend=weekend(radiologist, roasterradio, ris_point)
       thursday=thursday_afterhours(radiologist, roasterradio, ris_point)
@@ -392,9 +390,10 @@ for radiologist in radioglist_list:
        allapend2=consappend2
 
   allapend2['day']='WeekDay'
-  allapend2.info()
   if(len(Overtime)>0):
       allapend2=allapend2.loc[~allapend2['PROCEDURE_KEY'].isin(Overtime['PROCEDURE_KEY'])]
+  allapend2.drop_duplicates(['PROCEDURE_KEY'],inplace=True)
+
 #     merged_df = pd.merge(allapend2, allapend, on='PROCEDURE_KEY', how='left', indicator=True)
 
 # # Filter out the rows from df1 that are not in df2
@@ -408,13 +407,29 @@ for radiologist in radioglist_list:
   
   
   
-  
   overtime_classes=['WeekEnd','Thursday_afterHours','Extra Shifts','ER REPORTING']
+  if(len(Overtime)>0):
+      Overtime.loc[Overtime['day']=='WeekEnd','Accu_M_end']=Overtime.loc[Overtime['day'] =='WeekEnd', 'Earned_M'].cumsum()
+      Overtime.loc[Overtime['day']=='Thursday_afterHours','Accu_M_end']=Overtime.loc[Overtime['day'] =='Thursday_afterHours', 'Earned_M'].cumsum()
+      Overtime.loc[Overtime['day']=='Extra Shifts','Accu_M_end']=Overtime.loc[Overtime['day'] =='Extra Shifts', 'Earned_M'].cumsum()
+      Overtime.loc[Overtime['day']=='ER REPORTING','Accu_M_end']=Overtime.loc[Overtime['day'] =='ER REPORTING', 'Earned_M'].cumsum()
+  else:
+       Overtime['Accu_M_end']=0
+      
+       
+      
+    
+  
+
+  
+  
+  
+  
   allapend3=pd.concat([Overtime,allapend2]) 
   allapend3 = allapend3.reset_index(drop=True)
   allapend3.sort_values('REPORT_VERIFICATION_DATE')
   allapend3.loc[allapend3['day']=="WeekDay",'Accu_point']=allapend3.loc[allapend3['day'] == "WeekDay", 'Earned_point'].cumsum()
-  allapend3.loc[allapend3['day'].isin(overtime_classes),'Accu_M_end']=allapend3.loc[allapend3['day'] .isin(overtime_classes), 'Earned_M'].cumsum()
+  #allapend3.loc[allapend3['day'].isin(overtime_classes),'Accu_M_end']=allapend3.loc[allapend3['day'] .isin(overtime_classes), 'Earned_M'].cumsum()
 
   allapend3.loc[allapend3['day']=="WeekDay",'Accu_M']=allapend3.loc[allapend3['day'] == "WeekDay", 'Earned_M'].cumsum()
   # allapend3['Accu_point']=allapend3['Earned_point'].cumsum()
@@ -441,8 +456,7 @@ for radiologist in radioglist_list:
   final2['Radiolgist']=radiologist
 
   allapend4=pd.concat([allapend4,allapend3])
-  xx=allapend4.drop_duplicates(['PROCEDURE_KEY'])
-  xx1=allapend4.loc[allapend4['Accu_M_day']>0]
+
   final1['Radiolgist']=radiologist
   
   
@@ -458,11 +472,11 @@ for radiologist in radioglist_list:
   #allapend3.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Weekend '+radiologist+'.xlsx', sheet_name = "All", index = False) 
   
   
-  # i+=1
+  i+=1
   
-  # if i > 34: 
-  #   break
-  #  #if i > 50: 
+  if i > 1: 
+    break
+    #if i > 50: 
   
   #     break
 fin=pd.merge(radtotalpoints, roaster2,left_on='Radiolgist',right_on='Name',how="left")

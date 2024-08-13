@@ -31,10 +31,10 @@ def weekend (radiologist,roasterradio,ris_point):
     weekendadmission=["O","I"]
 
     print(len(roasterradio))
-    print(len(str(roasterradio.iloc[0, 6])))
+    print(len(str(roasterradio.iloc[0, 5])))
     xx=roasterradio['Weekend Reporting   (Friday-Saturday)'].reset_index()
     leng=xx.iloc[0:0]
-    #print(len(roasterradio.iloc[0, 9]))
+    print((roasterradio.iloc[0, 5]))
    
         
     roasterradio['Weekend Reporting   (Friday-Saturday)'] = roasterradio['Weekend Reporting   (Friday-Saturday)'].astype(str)
@@ -44,7 +44,7 @@ def weekend (radiologist,roasterradio,ris_point):
     
     wdlist=wdlist[wdlist!='_____']
     
-    if((len(str(roasterradio.iloc[0, 6]))>5)):
+    if((len(str(roasterradio.iloc[0, 5]))>5)):
      for elment in wdlist:
        print((elment.split(',')[0].strip(),'%d/%m/%Y'))
        print(elment.split(',')[1].strip())
@@ -117,7 +117,7 @@ def thursday_afterhours (radiologist,roasterradio,ris_point):
     assisappend=pd.DataFrame()
 
     print(len(roasterradio))
-    print(len(str(roasterradio.iloc[0, 7])))
+    print(len(str(roasterradio.iloc[0, 6])))
     xx=roasterradio['Thursday coverage'].reset_index()
     leng=xx.iloc[0:0]
     #print(len(roasterradio.iloc[0, 9]))
@@ -130,7 +130,7 @@ def thursday_afterhours (radiologist,roasterradio,ris_point):
     
     wdlist=wdlist[wdlist!='_____']
     
-    if((len(str(roasterradio.iloc[0, 7]))>5)):
+    if((len(str(roasterradio.iloc[0, 6]))>5)):
      for elment in wdlist:
        print((elment.split(',')[0].strip(),'%d/%m/%Y'))
        print(elment.split(',')[1].strip())
@@ -168,7 +168,7 @@ def extrashifts_assist (radiologist,roasterradio,ris_point):
     assisappend=pd.DataFrame()
 
     print(len(roasterradio))
-    print(len(str(roasterradio.iloc[0,11])))
+    print(len(str(roasterradio.iloc[0, 10])))
     xx=roasterradio['Extra Shifts for  Assistant'].reset_index()
     leng=xx.iloc[0:0]
     #print(len(roasterradio.iloc[0, 9]))
@@ -181,7 +181,7 @@ def extrashifts_assist (radiologist,roasterradio,ris_point):
     
     wdlist=wdlist[wdlist!='_____']
     
-    if((len(str(roasterradio.iloc[0, 11]))>5)):
+    if((len(str(roasterradio.iloc[0, 10]))>5)):
      for elment in wdlist:
        print((elment.split(',')[0].strip(),'%d/%m/%Y'))
        print(radiologist)
@@ -217,7 +217,7 @@ def er_reporting (radiologist,roasterradio,ris_point):
     assisappend=pd.DataFrame()
 
     print(len(roasterradio))
-    print(len(str(roasterradio.iloc[0, 9])))
+    print(len(str(roasterradio.iloc[0, 8])))
     xx=roasterradio['ER REPORTING'].reset_index()
     leng=xx.iloc[0:0]
     #print(len(roasterradio.iloc[0, 9]))
@@ -230,7 +230,7 @@ def er_reporting (radiologist,roasterradio,ris_point):
     
     wdlist=wdlist[wdlist!='_____']
     
-    if((len(str(roasterradio.iloc[0, 9]))>5)):
+    if((len(str(roasterradio.iloc[0, 8]))>5)):
      for elment in wdlist:
        print((elment.split(',')[0].strip(),'%d/%m/%Y'))
        print(radiologist)
