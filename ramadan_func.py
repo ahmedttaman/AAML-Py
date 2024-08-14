@@ -148,7 +148,7 @@ def thursday_afterhours (radiologist,roasterradio,ris_point):
        
 
     
-    consappend['Class']='Consultant'
+    consappend['Class']='solo management'
     consappend.rename(columns={'Cons_point':'Earned_point'},inplace=True)
     consappend.rename(columns={'Cons_price':'Earned_M'},inplace=True)
 
