@@ -61,8 +61,8 @@ from ramadan_func import *
 
 #ris = pd.read_csv(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj19 Feb, 2024.csv")
 ris1 = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_22 May, 2024.xlsx")
-#invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - February 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
-invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - January 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
+invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - February 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
+#invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - January 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
 
 
 
@@ -77,9 +77,9 @@ Reading_price = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productiv
 
 #roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\Dec.2023-Productivity-FINAL.xlsx")
 
-roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\JAN productivity-Final.xlsx")
+#roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\JAN productivity-Final.xlsx")
 
-#roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\FEB 2024 PRODUCTIVITY-Final.xlsx")
+roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\FEB 2024 PRODUCTIVITY-Final.xlsx")
 # roaster.columns=roaster.iloc[0]
 # roaster=roaster[1:]
 
@@ -153,7 +153,9 @@ ris['REPORT_VERIFICATION_DATE']=pd.to_datetime(ris['REPORT_VERIFICATION_DATE'],e
 
 startstr='12/01/23 00:00:01'
 start = datetime.strptime(startstr, '%m/%d/%y %H:%M:%S')
-endstr='01/31/24 23:59:59'
+endstr='02/29/24 23:59:59'
+nationalday = date(2024,2,22)
+
 end = datetime.strptime(endstr, '%m/%d/%y %H:%M:%S')
 ris.loc[ris['Hospital']=='Al Artaweyyah','PROCEDURE_KEY']=ris['PROCEDURE_KEY'].str.replace('.0','')
 
@@ -163,9 +165,11 @@ ris_dec=ris.loc[ris['PROCEDURE_KEY'].isin(invoice['Acc_hospital'])]
 
 
 
-
 # ris_dec=ris.loc[(ris['PROCEDURE_END'].between(start,end))]
 #ris_dec=ris.loc[(ris['PROCEDURE_END'].between(start,end))&(ris['REPORT_VERIFICATION_DATE'].between(start,end))]
+
+ris_dec=ris_dec.loc[((ris_dec['PROCEDURE_END'].dt.date!= nationalday)&(ris_dec['REPORT_VERIFICATION_DATE'].dt.date!= nationalday))]
+
 
 ris_dec.loc[(ris_dec['SIGNER_Name2']=='AHMAD ADNAN MOHAMMED ALDEREIHIM'),'SIGNER_Name2']='AHMED IBRAHIM ALDRAIHEM'
 
@@ -484,8 +488,8 @@ fin.info()
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
 fin['Overtime']=0
 fin.loc[fin['day']=='WeekDay','Overtime']=fin['total_point']-fin['total_required_point']
-fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_Jan_13August.xlsx', sheet_name = "All", index = False)
-rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_Jan_13August.xlsx', sheet_name = "All", index = False)
+fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_Feb_13August.xlsx', sheet_name = "All", index = False)
+rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_Feb_13August.xlsx', sheet_name = "All", index = False)
 
 
 ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_jan2.xlsx', sheet_name = "All", index = False)
