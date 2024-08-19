@@ -33,8 +33,8 @@ alyma_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\All_Staff_Augu
 
 
 ###################PMAH clen and compine data######################################
-phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Dec 23 to 10 Aug 24.xlsx")
-phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Dec 23 to 10 Aug 24.xlsx")
+phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Dec 23 to 17 Aug 24.xlsx")
+phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Dec 23 to 17 Aug 24.xlsx")
 phma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -99,6 +99,11 @@ phah_combined=phah_combined[~phah_combined['SECTION_CODE'].isin(['CARM','IR'])]
 phah_combined=phah_combined[~phah_combined['WORKPLACE_CODE'].isin(['US-IR'])]
 phah_combined=phah_combined[~phah_combined['PROCEDURE_STATUS_LONG'].isin(['del'])]
 phah_combined=phah_combined[~phah_combined['PROCEDURE_NAME'].str.contains('dental',case=False)]
+phah_combined=phah_combined[~phah_combined['PROCEDURE_NAME'].str.contains('-arm',case=False)]
+phah_combined=phah_combined[~phah_combined['PROCEDURE_NAME'].str.contains('XR Panorex/Orthopantogram',case=False)]
+phah_combined=phah_combined[~phah_combined['PROCEDURE_NAME'].str.contains('CT MYELOGRAM',case=False)]
+
+
 
 
 
@@ -199,7 +204,7 @@ pmah_notmappedradio=phah_all.loc[(phah_all['SIGNER_Name2'].isnull())&(phah_all['
 
 ############################KFMC read data#############################
 
-kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__Admin_12 Aug _20240812_1124.xlsx")
+kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__Admin 18 Aug_20240818_1128.xlsx")
 
 
 
@@ -412,8 +417,8 @@ Outsid final and there is no signer name
 ################################# ِAl Yamamh###################
 ####modality to sction group, admission type 
 
-alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Aug Exam 12 August.xlsx")
-alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah Aug Reported 12 August.xlsx")
+alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah 17 Aug Exam.xlsx")
+alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah 17 Aug Reported.xlsx")
 alyma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -544,7 +549,7 @@ alyma_combined2_notmappedradio=alyma_combined2.loc[(alyma_combined2['SIGNER_Name
 alyma_combined2['Hospital']='Al Yamamah'
 #phah_all.to_excel(r'D:\AAML\CCC\Hospitals data\PMAH\PMAH contract modalityall.xlsx', sheet_name = "modality", index = False) 
 
-old_alyma = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Alyamamh_OldRis_12 Aug, 2024.xlsx")
+old_alyma = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Alyamamh_OldRis_18 Aug, 2024.xlsx")
 
 alyma_all= pd.concat([alyma_combined2, old_alyma], ignore_index=True,axis=0)  
 ax=alyma_all['PROCEDURE_KEY'].duplicated()
@@ -571,7 +576,7 @@ phah_kfmc_yamamh= pd.concat([phah_kfmc_combined, alyma_all], ignore_index=True,a
 ####modality to sction group, admission type 
 
 
-alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Alartawiah 11 Aug 2024.xlsx")
+alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Alartawiah 17 Aug 2024.xlsx")
 
 alartwiah.info()
 
@@ -673,7 +678,7 @@ Alartawyah_notmappedradio=alartwiahrenamed.loc[(alartwiahrenamed['SIGNER_Name2']
 ##### report status to study status 
 
 
-dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 DEC - 11 AUG.xlsx")
+dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 DEC - 18 AUG.xlsx")
 dwadme.info()
 
 dwadme['Patient ID']=dwadme['Patient ID'].astype(str).str.split(pat=".").str[0]
@@ -770,7 +775,7 @@ dwadme_notmappedradio=dawadmerenamed.loc[(dawadmerenamed['SIGNER_Name2'].isnull(
 ##### report status to study status 
 
 
-zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 DEC - 11 AUG.xlsx")
+zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 DEC - 18 AUG.xlsx")
 zulfi.info()
 zulfi=zulfi.drop_duplicates(['Accession number'],keep="last")
 
@@ -861,7 +866,7 @@ zulfi_notmappedradio=zulfirenamed.loc[(zulfirenamed['SIGNER_Name2'].isnull())&(z
 ###############################    Majmmah
 
 
-majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 DEC - 11 AUG.xlsx")
+majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 DEC - 18 AUG.xlsx")
 
 
 
@@ -944,15 +949,15 @@ majmmahrenamed['Hospital']='Al Majmaah'
 
 
 
-ph_kf_yam_ar_dw_zu_mj= pd.concat([ph_kf_yam_ar_dw_zu, majmmahrenamed], ignore_index=True,axis=0)  
+ph_kf_yam_ar_dw_zu_mj2= pd.concat([ph_kf_yam_ar_dw_zu, majmmahrenamed], ignore_index=True,axis=0)  
 # ph_kf_yam_ar_dw_zu_mj['PROCEDURE_END']=pd.to_datetime(ph_kf_yam_ar_dw_zu_mj['PROCEDURE_END'],errors="coerce")
-ph_kf_yam_ar_dw_zu_mj=ph_kf_yam_ar_dw_zu_mj.drop(['Days to Sched','DICTATION_DATE','Quality Element','Quality Priority','Quality User','Protocol Info','Quality Comment','Residents','Name','PROCEDURE_REMARK','REQUEST_NO','REQUEST_DOCTOR_LASTNAME','REQUEST_DOCTOR_FIRSTNAME','COREAD_DATE','Tech QA','Repeats','Sched Prod','Order Time','Order Date','Anesthesia','Phys Prod','ChkIn DTTM','Check-in to Appt Time (min)','Check-in to Begin (min)','Addendum Note','Peer Review Comments','Peer Review Decision','Peer Review Instant','Peer Review Reviewer','Notes','Notes.1','Study Note',], axis=1)
+ph_kf_yam_ar_dw_zu_mj2=ph_kf_yam_ar_dw_zu_mj2.drop(['Days to Sched','DICTATION_DATE','Quality Element','Quality Priority','Quality User','Protocol Info','Quality Comment','Residents','Name','PROCEDURE_REMARK','REQUEST_NO','REQUEST_DOCTOR_LASTNAME','REQUEST_DOCTOR_FIRSTNAME','COREAD_DATE','Tech QA','Repeats','Sched Prod','Order Time','Order Date','Anesthesia','Phys Prod','ChkIn DTTM','Check-in to Appt Time (min)','Check-in to Begin (min)','Addendum Note','Peer Review Comments','Peer Review Decision','Peer Review Instant','Peer Review Reviewer','Notes','Notes.1','Study Note',], axis=1)
+ph_kf_yam_ar_dw_zu_mj=ph_kf_yam_ar_dw_zu_mj2.iloc[:,:-33]
 
 ph_kf_yam_ar_dw_zu_mj.info()
 
-
-all_notmappedprocedires=ph_kf_yam_ar_dw_zu_mj.loc[ph_kf_yam_ar_dw_zu_mj['PROCEDURE_NAME_Nicp'].isnull()].groupby(['Hospital',"PROCEDURE_NAME"])['PROCEDURE_NAME'].count()
-
+all_notmappedprocedires=ph_kf_yam_ar_dw_zu_mj.loc[ph_kf_yam_ar_dw_zu_mj['PROCEDURE_NAME_Nicp'].isnull()].groupby(['Hospital',"PROCEDURE_NAME"])['PROCEDURE_KEY'].count()
+all_notmappedprocedires=all_notmappedprocedires.reset_index()
 
 ph_kf_yam_ar_dw_zu_mj['SIGNER_Name2']=ph_kf_yam_ar_dw_zu_mj['SIGNER_Name2'].str.strip()
 
@@ -961,7 +966,7 @@ ph_kf_yam_ar_dw_zu_mj=ph_kf_yam_ar_dw_zu_mj.loc[~((ph_kf_yam_ar_dw_zu_mj['WORKPL
 #invest=ph_kf_yam_ar_dw_zu_mj.loc[((ph_kf_yam_ar_dw_zu_mj["SIGNER_Name2"]=='Dr. Feras Essa Alomar'))& (ph_kf_yam_ar_dw_zu_mj["PROCEDURE_STATUS"]=='Final')]
 all_notmappedradio=ph_kf_yam_ar_dw_zu_mj.loc[(ph_kf_yam_ar_dw_zu_mj['SIGNER_Name2'].isnull())&(ph_kf_yam_ar_dw_zu_mj['PROCEDURE_STATUS']=='Final')]['SIGNER_Name'].value_counts().reset_index()
 
-ph_kf_yam_ar_dw_zu_mj2=ph_kf_yam_ar_dw_zu_mj.columns
+# ph_kf_yam_ar_dw_zu_mj2=ph_kf_yam_ar_dw_zu_mj.columns
 
 from openpyxl import Workbook
 from openpyxl import Workbook
