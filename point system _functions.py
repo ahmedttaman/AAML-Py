@@ -60,8 +60,8 @@ from ramadan_func import *
 
 
 #ris = pd.read_csv(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj19 Feb, 2024.csv")
-ris1 = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_22 May, 2024.xlsx")
-invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - February 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
+ris1 = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_18 Aug, 2024.xlsx")
+invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\May 2024 Procedures extract details all hospitals_RF.xlsx",sheet_name="Accessions")
 #invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - January 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
 
 
@@ -79,15 +79,19 @@ Reading_price = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productiv
 
 #roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\JAN productivity-Final.xlsx")
 
-roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\FEB 2024 PRODUCTIVITY-Final.xlsx")
+roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\MAY 2024 - Doctors Productivity.xlsx")
 # roaster.columns=roaster.iloc[0]
 # roaster=roaster[1:]
 
 
 
 roaster.info()
-roaster.replace('____',np.nan ,inplace=True)
-roaster.replace('__',np.nan,inplace=True)
+
+# roaster.replace(roaster['TOTAL ACTIVITIES'].str.startswith('-', na=False),np.nan ,inplace=True)
+roaster.replace(r'^\s*$', np.nan, regex=True,inplace=True)
+
+# roaster.replace('____',np.nan ,inplace=True)
+# roaster.replace('__',np.nan,inplace=True)
 roaster = roaster.dropna(subset=['ID No.'])
 roaster['TOTAL ACTIVITIES']=roaster['TOTAL ACTIVITIES'].apply(lambda x: x if x >0 else 0)
 
@@ -153,7 +157,7 @@ ris['REPORT_VERIFICATION_DATE']=pd.to_datetime(ris['REPORT_VERIFICATION_DATE'],e
 
 startstr='12/01/23 00:00:01'
 start = datetime.strptime(startstr, '%m/%d/%y %H:%M:%S')
-endstr='02/29/24 23:59:59'
+endstr='05/31/24 23:59:59'
 nationalday = date(2024,2,22)
 
 end = datetime.strptime(endstr, '%m/%d/%y %H:%M:%S')
@@ -361,8 +365,6 @@ for radiologist in radioglist_list:
   
   
   
-  ris_point.info()
-  
   
   
  #print(len(roasterradio.iloc[0, 9]))
@@ -478,18 +480,20 @@ for radiologist in radioglist_list:
   
   # i+=1
   
-  # if i > 1: 
-  #   break
-    #if i > 50: 
+  #  # if i > 1: 
+  #  #   break
+  # if i > 42: 
   
-  #     break
+  #  break
+
+mm=ris_point['SIGNER_Name2'].value_counts()
 fin=pd.merge(radtotalpoints, roaster2,left_on='Radiolgist',right_on='Name',how="left")
 fin.info()
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
 fin['Overtime']=0
 fin.loc[fin['day']=='WeekDay','Overtime']=fin['total_point']-fin['total_required_point']
-fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_Feb_18August.xlsx', sheet_name = "All", index = False)
-rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_Feb_18August.xlsx', sheet_name = "All", index = False)
+fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_May_22August.xlsx', sheet_name = "All", index = False)
+rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_May_22August.xlsx', sheet_name = "All", index = False)
 
 
 ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_jan2.xlsx', sheet_name = "All", index = False)
@@ -499,7 +503,7 @@ xx=ris_point.loc[ris_point['OPD 2024'].isnull()]
 xx=ris_point.loc[(ris_point['OPD 2024'].isnull())&(~ris_point['PROCEDURE_NAME'].isnull())]
 xx=ris_point.loc[(ris_point['OPD 2024'].isnull())&(~ris_point['PROCEDURE_NAME_Nicp'].isnull())]
 
-xxx=ris_point.loc[ris_point['SIGNER_Name2']=='Dr. Eman Abdelgadir']
+xxx=ris_point.loc[ris_point['SIGNER_Name2']=='Dr. Mohammed Emarat Hussain']
 
 ris_dec.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\InvoiceDec_data.xlsx', sheet_name = "All", index = False) 
 

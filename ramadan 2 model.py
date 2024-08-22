@@ -111,9 +111,10 @@ roaster['TOTAL ACTIVITIES']=roaster['TOTAL ACTIVITIES'].apply(lambda x: x if x >
 roaster['workhours']=((roaster['No. of Workdays']*6)+12)-roaster['TOTAL ACTIVITIES']
 Radiolgistnames = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ALL RADIOLOGOSITS MAPPED NAMES 15 May 24.xlsx")
 roaster2=pd.merge(roaster, Radiolgistnames,left_on=roaster['Name'].str.upper().apply(lambda x: x.replace(' ','')),right_on=Radiolgistnames['Final unified list'].astype(str).str.upper().apply(lambda x: x.replace(' ','')),how="left")
+roaster2=roaster2.drop(['key_0'],axis=1)
 
 roaster2=roaster2.iloc[: , :-9]
-educationhrs=37.4
+educationhrs=40.7
 northconsultant=['Dr. Fawzy Mohamed','Dr. Jaafar Abdul Rahman','Dr. Ahmed Ibrahim Abdel Aal','Dr. Ehab Ali Ahmed']
 eduocationnormalize=.675
 monthworkdays=max(roaster2['No. of Workdays'])
@@ -169,7 +170,7 @@ ris['REPORT_VERIFICATION_DATE']=pd.to_datetime(ris['REPORT_VERIFICATION_DATE'],e
 
 startstr='12/01/23 00:00:01'
 start = datetime.strptime(startstr, '%m/%d/%y %H:%M:%S')
-endstr='2/29/24 23:59:59'
+endstr='4/30/24 23:59:59'
 end = datetime.strptime(endstr, '%m/%d/%y %H:%M:%S')
 ris.loc[ris['Hospital']=='Al Artaweyyah','PROCEDURE_KEY']=ris['PROCEDURE_KEY'].str.replace('.0','')
 
@@ -180,7 +181,8 @@ ris['Hospital'].value_counts()
 EidStart = date(2024,4,5)
 EidEnd = date(2024,4,13)
 
-ris_dec=ris_dec.loc[((ris_dec['PROCEDURE_END'].dt.date< EidStart)&(ris_dec['PROCEDURE_END'].dt.date> EidEnd)&(ris_dec['REPORT_VERIFICATION_DATE'].dt.date< EidStart)&(ris_dec['REPORT_VERIFICATION_DATE'].dt.date> EidEnd))]
+ris_dec_tmp=ris_dec.loc[(ris_dec['PROCEDURE_END'].dt.date< EidStart)|(ris_dec['PROCEDURE_END'].dt.date> EidEnd)]
+ris_dec=ris_dec_tmp.loc[(ris_dec_test['REPORT_VERIFICATION_DATE'].dt.date< EidStart)|(ris_dec_tmp['REPORT_VERIFICATION_DATE'].dt.date> EidEnd)]
 
 
 
@@ -387,7 +389,6 @@ for radiologist in radioglist_list:
   
   
   
-  ris_point.info()
   
   
   
@@ -505,9 +506,9 @@ for radiologist in radioglist_list:
   
   # i+=1
   
-  # if i > 18: 
+  # if i > 29: 
   #     break
-  #  #if i > 50: 
+    #if i > 50: 
   
   #     break
 fin=pd.merge(radtotalpoints, roaster2,left_on='Radiolgist',right_on='Name',how="left")
@@ -515,8 +516,8 @@ fin.info()
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
 fin['Overtime']=0
 fin.loc[fin['day']=='WeekDay','Overtime']=fin['total_point']-fin['total_required_point']
-fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_MARCH_1August.xlsx', sheet_name = "All", index = False)
-rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_MARCH_1August.xlsx', sheet_name = "All", index = False)
+fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_April_22August.xlsx', sheet_name = "All", index = False)
+rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_April_22August.xlsx', sheet_name = "All", index = False)
 
 
 ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_March.xlsx', sheet_name = "All", index = False)
