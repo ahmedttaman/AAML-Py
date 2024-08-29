@@ -85,7 +85,7 @@ roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Ro
 
 
 
-roaster.info()
+# roaster.info()
 
 # roaster.replace(roaster['TOTAL ACTIVITIES'].str.startswith('-', na=False),np.nan ,inplace=True)
 roaster.replace(r'^\s*$', np.nan, regex=True,inplace=True)
@@ -148,7 +148,7 @@ roaster2=roaster2.drop_duplicates(['Name'])
 
 ris=ris1.copy()
 invtest2=ris1.loc[ris1['PROCEDURE_KEY']=="PRCA000000193299"]
-ris.info()
+# ris.info()
 outprocedur=['XR INTRAOPERATIVE','XR Dental Panoramic','MRI Contrast Material','RAD OUTSIDE CD FOR REVIEW']
 ris=ris.loc[~ris['PROCEDURE_NAME'].isin(outprocedur)]
 
@@ -222,7 +222,7 @@ ris_point['TAT']=ris_point['REPORT_VERIFICATION_DATE']-ris_point['PROCEDURE_END'
 
 filtered_df = ris_point.loc[(ris_point['PROCEDURE_END'].dt.weekday >= 3) & (ris_point['PROCEDURE_END'].dt.weekday <= 5) &((ris_point['PROCEDURE_END'].dt.weekday == 5) | (ris_point['PROCEDURE_END'].dt.time >= pd.to_datetime('16:30').time()))]
 
-ris_point.info()
+# ris_point.info()
 
 # def calcpoint():
 #     if ris_dec['Age']<=14:
@@ -480,20 +480,20 @@ for radiologist in radioglist_list:
   
   # i+=1
   
-  #  # if i > 1: 
-  #  #   break
-  # if i > 42: 
+  # # #  # if i > 1: 
+  # # #  #   break
+  # if i > 32: 
   
   #  break
 
 mm=ris_point['SIGNER_Name2'].value_counts()
 fin=pd.merge(radtotalpoints, roaster2,left_on='Radiolgist',right_on='Name',how="left")
-fin.info()
+# fin.info()
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
 fin['Overtime']=0
 fin.loc[fin['day']=='WeekDay','Overtime']=fin['total_point']-fin['total_required_point']
-fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_May_22August.xlsx', sheet_name = "All", index = False)
-rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_May_22August.xlsx', sheet_name = "All", index = False)
+fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_May_29August.xlsx', sheet_name = "All", index = False)
+rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_May_29August.xlsx', sheet_name = "All", index = False)
 
 
 ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_jan2.xlsx', sheet_name = "All", index = False)

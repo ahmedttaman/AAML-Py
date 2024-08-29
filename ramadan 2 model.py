@@ -182,10 +182,10 @@ EidStart = date(2024,4,5)
 EidEnd = date(2024,4,13)
 
 ris_dec_tmp=ris_dec.loc[(ris_dec['PROCEDURE_END'].dt.date< EidStart)|(ris_dec['PROCEDURE_END'].dt.date> EidEnd)]
-ris_dec=ris_dec_tmp.loc[(ris_dec_test['REPORT_VERIFICATION_DATE'].dt.date< EidStart)|(ris_dec_tmp['REPORT_VERIFICATION_DATE'].dt.date> EidEnd)]
 
 
 
+ris_decShima=ris_dec.loc[((ris_dec['SIGNER_Name2']=='Dr. Shaimaa Abdelazim')|(ris_dec['Assistant']=='Dr. Shaimaa Abdelazim'))]
 
 
 
@@ -516,8 +516,8 @@ fin.info()
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
 fin['Overtime']=0
 fin.loc[fin['day']=='WeekDay','Overtime']=fin['total_point']-fin['total_required_point']
-fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_April_22August.xlsx', sheet_name = "All", index = False)
-rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_April_22August.xlsx', sheet_name = "All", index = False)
+fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_April_27August.xlsx', sheet_name = "All", index = False)
+rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_April_27August.xlsx', sheet_name = "All", index = False)
 
 
 ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_March.xlsx', sheet_name = "All", index = False)
