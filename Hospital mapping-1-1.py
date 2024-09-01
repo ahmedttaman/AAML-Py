@@ -33,8 +33,8 @@ alyma_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\All_Staff_Augu
 
 
 ###################PMAH clen and compine data######################################
-phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Dec 23 to 17 Aug 24.xlsx")
-phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Dec 23 to 17 Aug 24.xlsx")
+phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Dec 23 to 31 Aug 24 .xlsx")
+phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Dec 23 to 31 Aug 24.xlsx")
 phma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -204,7 +204,7 @@ pmah_notmappedradio=phah_all.loc[(phah_all['SIGNER_Name2'].isnull())&(phah_all['
 
 ############################KFMC read data#############################
 
-kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__Admin 18 Aug_20240818_1128.xlsx")
+kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__Admin_Aug_20240901_1001.xlsx")
 
 
 
@@ -407,9 +407,9 @@ phah_kfmc_combined= pd.concat([phah_all, kfmcrenamed], ignore_index=True,axis=0)
 
 kfmc_notmappedradio=kfmcrenamed.loc[(kfmcrenamed['SIGNER_Name2'].isnull())&(kfmcrenamed['PROCEDURE_STATUS']=='Final')]['SIGNER_Name'].value_counts().reset_index()
 
-Alia=kfmcrenamed.loc[(kfmcrenamed['SIGNER_Name']=='ALIYA IBRAHIM ALAWAJI')]
+# Alia=kfmcrenamed.loc[(kfmcrenamed['SIGNER_Name']=='ALIYA IBRAHIM ALAWAJI')]
 
-Outsid final and there is no signer name 
+# Outsid final and there is no signer name 
 
 
 
@@ -417,8 +417,8 @@ Outsid final and there is no signer name
 ################################# ِAl Yamamh###################
 ####modality to sction group, admission type 
 
-alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah 17 Aug Exam.xlsx")
-alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah 17 Aug Reported.xlsx")
+alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah 01 Sep Exam.xlsx")
+alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah 01 Sep Reported.xlsx")
 alyma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -549,7 +549,7 @@ alyma_combined2_notmappedradio=alyma_combined2.loc[(alyma_combined2['SIGNER_Name
 alyma_combined2['Hospital']='Al Yamamah'
 #phah_all.to_excel(r'D:\AAML\CCC\Hospitals data\PMAH\PMAH contract modalityall.xlsx', sheet_name = "modality", index = False) 
 
-old_alyma = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Alyamamh_OldRis_18 Aug, 2024.xlsx")
+old_alyma = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Alyamamh_OldRis_01 Sep, 2024.xlsx")
 
 alyma_all= pd.concat([alyma_combined2, old_alyma], ignore_index=True,axis=0)  
 ax=alyma_all['PROCEDURE_KEY'].duplicated()
@@ -576,7 +576,7 @@ phah_kfmc_yamamh= pd.concat([phah_kfmc_combined, alyma_all], ignore_index=True,a
 ####modality to sction group, admission type 
 
 
-alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Alartawiah 17 Aug 2024.xlsx")
+alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Alartawiah 01 Sep 2024.xlsx")
 
 alartwiah.info()
 
@@ -678,7 +678,7 @@ Alartawyah_notmappedradio=alartwiahrenamed.loc[(alartwiahrenamed['SIGNER_Name2']
 ##### report status to study status 
 
 
-dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 DEC - 18 AUG.xlsx")
+dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 DEC - 1 SEP.xlsx")
 dwadme.info()
 
 dwadme['Patient ID']=dwadme['Patient ID'].astype(str).str.split(pat=".").str[0]
@@ -775,7 +775,7 @@ dwadme_notmappedradio=dawadmerenamed.loc[(dawadmerenamed['SIGNER_Name2'].isnull(
 ##### report status to study status 
 
 
-zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 DEC - 18 AUG.xlsx")
+zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 DEC - 1 SEP.xlsx")
 zulfi.info()
 zulfi=zulfi.drop_duplicates(['Accession number'],keep="last")
 
@@ -866,7 +866,7 @@ zulfi_notmappedradio=zulfirenamed.loc[(zulfirenamed['SIGNER_Name2'].isnull())&(z
 ###############################    Majmmah
 
 
-majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 DEC - 18 AUG.xlsx")
+majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 DEC - 1 SEP.xlsx")
 
 
 
