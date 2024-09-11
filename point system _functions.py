@@ -165,9 +165,10 @@ ris.loc[ris['Hospital']=='Al Artaweyyah','PROCEDURE_KEY']=ris['PROCEDURE_KEY'].s
 
 ris_dec=ris.loc[ris['PROCEDURE_KEY'].isin(invoice['Acc_hospital'])]
 #invtest=invoice.loc[~invoice['Acc_hospital'].isin(ris['PROCEDURE_KEY'])].dropna()
+ris_dec=pd.merge(ris_dec,invoice,left_on=['PROCEDURE_KEY'],right_on=['Acc_hospital']  ,how="left")
+ris_dec=ris_dec.drop(['Acc_hospital'],axis=1)
 
-
-
+ris_dec.info()
 
 # ris_dec=ris.loc[(ris['PROCEDURE_END'].between(start,end))]
 #ris_dec=ris.loc[(ris['PROCEDURE_END'].between(start,end))&(ris['REPORT_VERIFICATION_DATE'].between(start,end))]
@@ -200,8 +201,7 @@ point_map["NICIP Examination Name2"]=point_map["NICIP Examination Name2"].apply(
 
 point_map=point_map.drop_duplicates(['NICIP Examination Name2'],keep="first")
 
-
-
+zulf=
 ris_point=pd.merge(ris_dec, point_map,left_on=['PROCEDURE_NAME_Nicp2'],right_on=['NICIP Examination Name2']  ,how="left")
 # ris_point['scanday']=ris_point['PROCEDURE_END'].dt.dayofweek
 # ris_point['reportday']=ris_point['REPORT_VERIFICATION_DATE'].dt.dayofwee
@@ -257,12 +257,22 @@ ris_point.loc[(~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E","InPatient","I
 ris_point.loc[(~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E","InPatient","I"])&(ris_point['SECTION_CODE'].str not in normalized_modality)&(ris_point['Age']<=14)),'point']=Baseline_Points_hour/(ris_point['OPD 2024']*peditric_factor)
 ris_point.loc[(~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E","InPatient","I"])&(ris_point['SECTION_CODE']=="X-Ray")&(ris_point['Age']<=14)),'point']=(Baseline_Points_hour_xr/(ris_point['OPD 2024']*peditric_factor))/normlization_xr
 ris_point.loc[(~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E","InPatient","I"])&(ris_point['SECTION_CODE']=="Mamo")&(ris_point['Age']<=14)),'point']=(Baseline_Points_hour_mamo/(ris_point['OPD 2024']*peditric_factor))/normlization_mamo
+ris_point.info()
+
+
+
+
+
+
 
 ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].astype(str)=='nan')),'Cons_point']=ris_point['point']
 ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Cons_point']=ris_point['point']*.6
 ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Assis_point']=ris_point['point']*.4
 ris_point.loc[ris_point['Hospital']=='Al Artaweyyah','Hospital']='Al Artaweyah'
 ris_point.loc[ris_point['Hospital']=='Al Majmaah','Hospital']='Al Majmah'
+def alzulfi_us():
+    ris_point.loc[(ris_point['Hospital']=="Alzulfi"])&(ris_point['SIGNER_Name2']==ris_point['Performing Technologist Name'])&(ris_point['SECTION_CODE']=='US')),'point']=(ris_point['point']*2)
+
 
 
 ris_point['Hospital_Proc']=ris_point['Hospital']+"_"+ris_point['PROCEDURE_CODE']
@@ -276,6 +286,8 @@ ris_point=pd.merge(ris_point,Reading_price,on='Hospital_Proc',how='left')
 ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].astype(str)=='nan')),'Cons_price']=ris_point['Reading Price']
 ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Cons_price']=ris_point['Reading Price']*.6
 ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Assis_price']=ris_point['Reading Price']*.4
+
+
 
 
 #ris_point['point']=ris_point.point.astype(float).round(1) 
