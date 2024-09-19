@@ -29,7 +29,7 @@ pmah_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All Staff V 29 Apri
 
 
 
-alymamh = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah old ris  17 august 2024 1.xlsx")
+alymamh = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\Yamamah old ris 15 sep.xlsx")
 
 alym_proc_mapping = pd.read_excel(r"D:\AAML\CCC\Hospitals data\NAPHIS Imaging Procedures 25 AUG 23.xlsx",sheet_name="Imaging Procedure")
 
@@ -132,6 +132,7 @@ alymamhrenamed["PROCEDURE_NAME2"]=alymamhrenamed["PROCEDURE_NAME2"].apply(lambda
 alymamhrenamed["PROCEDURE_NAME_Nicp"]=alymamhrenamed["PROCEDURE_NAME2"].map(procduremapping_pointsdwadme[procduremapping_pointsdwadme['NPHIES Examination Name']!="nan"].set_index('NPHIES Examination Name')['NICIP Examination Name'])
 
 alymamhrenamed.loc[alymamhrenamed['PROCEDURE_NAME2']=='NAN','PROCEDURE_NAME_Nicp']=" "
+alymamhrenamed['REPORT_VERIFICATION_DATE']=pd.to_datetime(alymamhrenamed['REPORT_VERIFICATION_DATE'],format='%m/%d/%Y %I:%M:%S %p')
 
 
 
