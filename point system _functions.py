@@ -270,7 +270,8 @@ ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['
 ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Assis_point']=ris_point['point']*.4
 ris_point.loc[ris_point['Hospital']=='Al Artaweyyah','Hospital']='Al Artaweyah'
 ris_point.loc[ris_point['Hospital']=='Al Majmaah','Hospital']='Al Majmah'
-def alzulfi_us():
+
+def RadISTec(ris_point):
     ris_point.loc[(ris_point['Hospital']=="Alzulfi"])&(ris_point['SIGNER_Name2']==ris_point['Performing Technologist Name'])&(ris_point['SECTION_CODE']=='US')),'point']=(ris_point['point']*2)
 
 
