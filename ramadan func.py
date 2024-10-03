@@ -18,12 +18,10 @@ import os
 import datetime as dt
 
 
-Ramadan='3/10/2024'
 
 
-# def exclusion(ris_point):
-#     exclusion_dates=['2/22/2024','4/5/2024','4/6/2024','4/7/2024','4/8/2024','4/9/2024','4/10/2024','4/11/2024','4/12/2024','4/13/2024']
-#     ris_point=ris_point.loc[~]
+
+
 
 
 
@@ -33,10 +31,10 @@ def weekend (radiologist,roasterradio,ris_point):
     weekendadmission=["O","I"]
 
     print(len(roasterradio))
-    print(len(str(roasterradio.iloc[0, 6])))
+    print(len(str(roasterradio.iloc[0, 5])))
     xx=roasterradio['Weekend Reporting   (Friday-Saturday)'].reset_index()
     leng=xx.iloc[0:0]
-    #print(len(roasterradio.iloc[0, 9]))
+    print((roasterradio.iloc[0, 5]))
    
         
     roasterradio['Weekend Reporting   (Friday-Saturday)'] = roasterradio['Weekend Reporting   (Friday-Saturday)'].astype(str)
@@ -46,16 +44,17 @@ def weekend (radiologist,roasterradio,ris_point):
     
     wdlist=wdlist[wdlist!='_____']
     
-    if((len(str(roasterradio.iloc[0, 6]))>5)):
+    if((len(str(roasterradio.iloc[0, 5]))>5)):
      for elment in wdlist:
        print((elment.split(',')[0].strip(),'%d/%m/%Y'))
        print(elment.split(',')[1].strip())
        print(radiologist)
        
-       if((elment.split(',')[0].strip(),'%d/%m/%Y')>datetime.strptime('3/10/2024', '%m/%d/%y %H:%M:%S')):
+       if(datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date()>datetime.strptime('3/10/24', '%m/%d/%y').date()):
            if (elment.split(',')[1].strip())=="X-Ray":
                cons=ris_point.loc[((ris_point['SIGNER_Name2']==radiologist)&( (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())|((ris_point['PROCEDURE_END'].dt.date==(datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date()- pd.DateOffset(days=1)).date())&(ris_point['PROCEDURE_END'].dt.time >time( hour=14,minute=59,second=59))))&(ris_point['SECTION_CODE']=='X-Ray'))]
                consappend=pd.concat([consappend,cons],ignore_index=True, sort=False)
+               print(datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())
               
                assis=ris_point.loc[((ris_point['Assistant']==radiologist)&(ris_point['SIGNER_Name2']!=radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())&(ris_point['SECTION_CODE']==elment.split(',')[1].strip())&(ris_point['ADMISSION_TYPE'].isin(weekendadmission)))]
                assisappend=pd.concat([assisappend,assis],ignore_index=True, sort=False)
@@ -65,7 +64,7 @@ def weekend (radiologist,roasterradio,ris_point):
               
                assis=ris_point.loc[((ris_point['Assistant']==radiologist)&(ris_point['SIGNER_Name2']!=radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())&(ris_point['SECTION_CODE']==elment.split(',')[1].strip())&(ris_point['ADMISSION_TYPE'].isin(weekendadmission)))]
                assisappend=pd.concat([assisappend,assis],ignore_index=True, sort=False)
-     else:
+       else:
         if (elment.split(',')[1].strip())=="X-Ray":
             cons=ris_point.loc[((ris_point['SIGNER_Name2']==radiologist)&( (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())|((ris_point['PROCEDURE_END'].dt.date==(datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date()- pd.DateOffset(days=1)).date())&(ris_point['PROCEDURE_END'].dt.time >time( hour=15,minute=59,second=59))))&(ris_point['SECTION_CODE']=='X-Ray'))]
             consappend=pd.concat([consappend,cons],ignore_index=True, sort=False)
@@ -118,7 +117,7 @@ def thursday_afterhours (radiologist,roasterradio,ris_point):
     assisappend=pd.DataFrame()
 
     print(len(roasterradio))
-    print(len(str(roasterradio.iloc[0, 8])))
+    print(len(str(roasterradio.iloc[0, 6])))
     xx=roasterradio['Thursday coverage'].reset_index()
     leng=xx.iloc[0:0]
     #print(len(roasterradio.iloc[0, 9]))
@@ -131,13 +130,13 @@ def thursday_afterhours (radiologist,roasterradio,ris_point):
     
     wdlist=wdlist[wdlist!='_____']
     
-    if((len(str(roasterradio.iloc[0, 8]))>5)):
+    if((len(str(roasterradio.iloc[0, 6]))>5)):
      for elment in wdlist:
        print((elment.split(',')[0].strip(),'%d/%m/%Y'))
        print(elment.split(',')[1].strip())
        print(radiologist)
        
-       if((elment.split(',')[0].strip(),'%d/%m/%Y')>datetime.strptime('3/10/2024', '%m/%d/%y %H:%M:%S')):
+       if(datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date()>datetime.strptime('3/10/24', '%m/%d/%y').date()):
            ris_point.ADMISSION_TYPE.value_counts()
            cons=ris_point.loc[(ris_point['SIGNER_Name2']==radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())& (ris_point['PROCEDURE_END'].dt.time >time( hour=14,minute=59,second=59))&(ris_point['SECTION_CODE']==elment.split(',')[1].strip())&(ris_point['ADMISSION_TYPE']!='E')]
            consappend=pd.concat([consappend,cons],ignore_index=True, sort=False)
@@ -149,7 +148,7 @@ def thursday_afterhours (radiologist,roasterradio,ris_point):
        
 
     
-    consappend['Class']='Consultant'
+    consappend['Class']='solo management'
     consappend.rename(columns={'Cons_point':'Earned_point'},inplace=True)
     consappend.rename(columns={'Cons_price':'Earned_M'},inplace=True)
 
@@ -169,7 +168,7 @@ def extrashifts_assist (radiologist,roasterradio,ris_point):
     assisappend=pd.DataFrame()
 
     print(len(roasterradio))
-    print(len(str(roasterradio.iloc[0,12])))
+    print(len(str(roasterradio.iloc[0, 10])))
     xx=roasterradio['Extra Shifts for  Assistant'].reset_index()
     leng=xx.iloc[0:0]
     #print(len(roasterradio.iloc[0, 9]))
@@ -182,7 +181,7 @@ def extrashifts_assist (radiologist,roasterradio,ris_point):
     
     wdlist=wdlist[wdlist!='_____']
     
-    if((len(str(roasterradio.iloc[0, 12]))>5)):
+    if((len(str(roasterradio.iloc[0, 10]))>5)):
      for elment in wdlist:
        print((elment.split(',')[0].strip(),'%d/%m/%Y'))
        print(radiologist)
@@ -218,7 +217,7 @@ def er_reporting (radiologist,roasterradio,ris_point):
     assisappend=pd.DataFrame()
 
     print(len(roasterradio))
-    print(len(str(roasterradio.iloc[0, 13])))
+    print(len(str(roasterradio.iloc[0, 8])))
     xx=roasterradio['ER REPORTING'].reset_index()
     leng=xx.iloc[0:0]
     #print(len(roasterradio.iloc[0, 9]))
@@ -231,16 +230,16 @@ def er_reporting (radiologist,roasterradio,ris_point):
     
     wdlist=wdlist[wdlist!='_____']
     
-    if((len(str(roasterradio.iloc[0, 10]))>5)):
+    if((len(str(roasterradio.iloc[0, 8]))>5)):
      for elment in wdlist:
        print((elment.split(',')[0].strip(),'%d/%m/%Y'))
        print(radiologist)
        
-       if((elment.split(',')[0].strip(),'%d/%m/%Y')>datetime.strptime('3/10/2024', '%m/%d/%y %H:%M:%S')):
-           cons=ris_point.loc[(ris_point['SIGNER_Name2']==radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())& (ris_point['PROCEDURE_END'].dt.time >time( hour=14,minute=59,second=59))&(ris_point['ADMISSION_TYPE']=='E')&(ris_point['Hospital_x'].isin("PMAH","KFMC"))]
+       if(datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date()>datetime.strptime('3/10/24', '%m/%d/%y').date()):
+           cons=ris_point.loc[(ris_point['SIGNER_Name2']==radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())& (ris_point['PROCEDURE_END'].dt.time >time( hour=14,minute=59,second=59))&(ris_point['ADMISSION_TYPE']=='E')&(ris_point['Hospital_x'].isin(["PMAH","KFMC"]))]
            consappend=pd.concat([consappend,cons],ignore_index=True, sort=False)
        else:
-           cons=ris_point.loc[(ris_point['SIGNER_Name2']==radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())& (ris_point['PROCEDURE_END'].dt.time >time( hour=15,minute=59,second=59))&(ris_point['ADMISSION_TYPE']=='E')&(ris_point['Hospital_x'].isin("PMAH","KFMC"))]
+           cons=ris_point.loc[(ris_point['SIGNER_Name2']==radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())& (ris_point['PROCEDURE_END'].dt.time >time( hour=15,minute=59,second=59))&(ris_point['ADMISSION_TYPE']=='E')&(ris_point['Hospital_x'].isin(["PMAH","KFMC"]))]
            consappend=pd.concat([consappend,cons],ignore_index=True, sort=False)
 
       

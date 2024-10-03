@@ -60,9 +60,10 @@ from ramadan_func import *
 
 
 #ris = pd.read_csv(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj19 Feb, 2024.csv")
-ris1 = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_18 Aug, 2024.xlsx")
-invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\May 2024 Procedures extract details all hospitals_RF.xlsx",sheet_name="Accessions")
+ris1 = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_01 Sep, 2024.xlsx")
+#invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\May 2024 Procedures extract details all hospitals_RF.xlsx",sheet_name="Accessions")
 #invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - January 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
+invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - February 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
 
 
 
@@ -78,8 +79,10 @@ Reading_price = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productiv
 #roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\Dec.2023-Productivity-FINAL.xlsx")
 
 #roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\JAN productivity-Final.xlsx")
+roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\FEB 2024 PRODUCTIVITY-Final.xlsx")
 
-roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\MAY 2024 - Doctors Productivity.xlsx")
+
+#roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\MAY 2024 - Doctors Productivity.xlsx")
 # roaster.columns=roaster.iloc[0]
 # roaster=roaster[1:]
 
@@ -155,9 +158,9 @@ ris=ris.loc[~ris['PROCEDURE_NAME'].isin(outprocedur)]
 ris['PROCEDURE_END']=pd.to_datetime(ris['PROCEDURE_END'],errors="coerce")
 ris['REPORT_VERIFICATION_DATE']=pd.to_datetime(ris['REPORT_VERIFICATION_DATE'],errors="coerce")
 
-startstr='12/01/23 00:00:01'
+startstr='12/01/24 00:00:01'
 start = datetime.strptime(startstr, '%m/%d/%y %H:%M:%S')
-endstr='05/31/24 23:59:59'
+endstr='02/29/24 23:59:59'
 nationalday = date(2024,2,22)
 
 end = datetime.strptime(endstr, '%m/%d/%y %H:%M:%S')
@@ -201,7 +204,6 @@ point_map["NICIP Examination Name2"]=point_map["NICIP Examination Name2"].apply(
 
 point_map=point_map.drop_duplicates(['NICIP Examination Name2'],keep="first")
 
-zulf=
 ris_point=pd.merge(ris_dec, point_map,left_on=['PROCEDURE_NAME_Nicp2'],right_on=['NICIP Examination Name2']  ,how="left")
 # ris_point['scanday']=ris_point['PROCEDURE_END'].dt.dayofweek
 # ris_point['reportday']=ris_point['REPORT_VERIFICATION_DATE'].dt.dayofwee
@@ -270,11 +272,22 @@ ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['
 ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Assis_point']=ris_point['point']*.4
 ris_point.loc[ris_point['Hospital']=='Al Artaweyyah','Hospital']='Al Artaweyah'
 ris_point.loc[ris_point['Hospital']=='Al Majmaah','Hospital']='Al Majmah'
+ris_point.info()
 
-def RadISTec(ris_point):
-    ris_point.loc[(ris_point['Hospital']=="Alzulfi"])&(ris_point['SIGNER_Name2']==ris_point['Performing Technologist Name'])&(ris_point['SECTION_CODE']=='US')),'point']=(ris_point['point']*2)
+ris_point["Performing Technologist Name"]=ris_point["Performing Technologist Name"].str.upper()
+ris_point['RadISTec']=0
+    
+
+ris_point.loc[(ris_point['Hospital']=="Al Zulfi")&(~ris_point['PROCEDURE_NAME'].str.contains("Obstetric" ,na=False))&(ris_point['SIGNER_Name']==ris_point['Performing Technologist Name'])&(ris_point['SECTION_CODE']=='US'),'RadISTec']=1
+ris_point.loc[(ris_point['Hospital']=="Al Dawadmi")&(~ris_point['PROCEDURE_NAME'].str.contains("Obstetric", na=False))&(ris_point['SIGNER_Name']==ris_point['Performing Technologist Name'])&(ris_point['SECTION_CODE']=='US'),'RadISTec']=1
+ris_point.loc[(ris_point['Hospital']=="Al Yamamah")&(~ris_point['PROCEDURE_NAME'].str.contains("OBSTETRIC", na=False))&(ris_point['ADMISSION_TYPE'].isin(["E","I"]))&(ris_point['SECTION_CODE']=='US'),'RadISTec']=1
+ris_point.loc[ris_point['RadISTec']==1,'Cons_point']=ris_point['Cons_point']*2
+
+    
 
 
+    
+    
 
 ris_point['Hospital_Proc']=ris_point['Hospital']+"_"+ris_point['PROCEDURE_CODE']
 
@@ -487,7 +500,6 @@ for radiologist in radioglist_list:
   radtotalpoints['Month']=end
   rad_hos_moda['Month']=end
 
-  
   #allapend3.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Weekend '+radiologist+'.xlsx', sheet_name = "All", index = False) 
   
   
@@ -505,8 +517,8 @@ fin=pd.merge(radtotalpoints, roaster2,left_on='Radiolgist',right_on='Name',how="
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
 fin['Overtime']=0
 fin.loc[fin['day']=='WeekDay','Overtime']=fin['total_point']-fin['total_required_point']
-fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_May_29August.xlsx', sheet_name = "All", index = False)
-rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_May_29August.xlsx', sheet_name = "All", index = False)
+fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_Feb24_29Sep.xlsx', sheet_name = "All", index = False)
+rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_Feb24_29Sep.xlsx', sheet_name = "All", index = False)
 
 
 ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_jan2.xlsx', sheet_name = "All", index = False)
