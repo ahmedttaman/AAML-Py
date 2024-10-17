@@ -160,7 +160,7 @@ ris=ris.loc[~ris['PROCEDURE_NAME'].isin(outprocedur)]
 ris['PROCEDURE_END']=pd.to_datetime(ris['PROCEDURE_END'],errors="coerce")
 ris['REPORT_VERIFICATION_DATE']=pd.to_datetime(ris['REPORT_VERIFICATION_DATE'],errors="coerce")
 
-startstr='12/01/23 00:00:01'
+startstr='3/01/24 00:00:01'
 start = datetime.strptime(startstr, '%m/%d/%y %H:%M:%S')
 endstr='3/31/24 23:59:59'
 end = datetime.strptime(endstr, '%m/%d/%y %H:%M:%S')
@@ -304,24 +304,6 @@ ris_point=pd.merge(ris_point,Reading_price,on='Hospital_Proc',how='left')
 ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].astype(str)=='nan')),'Cons_price']=ris_point['Reading Price']
 ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Cons_price']=ris_point['Reading Price']*.6
 ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Assis_price']=ris_point['Reading Price']*.4
-
-
-
-
-#ris_point['point']=ris_point.point.astype(float).round(1) 
-
-
-
-
-
-# ris_point.loc[ris_point['ADMISSION_TYPE'].isin(['Emergency',"E"]),'WTime']=ris_point['READ_DATE']-ris_point['PROCEDURE_END']
-# ris_point.loc[~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E"]),'WTime']=ris_point['REPORT_VERIFICATION_DATE']-ris_point['PROCEDURE_END']
-
-
-# TAT applying
-# ris_point=ris_point.loc[~(ris_point['ADMISSION_TYPE'].isin(['Emergency',"E"]) & (ris_point['TAT']>"0 days 2:00:00"))]
-# ris_point=ris_point.loc[~(ris_point['ADMISSION_TYPE'].isin(["InPatient","I"]) & (ris_point['TAT']>"1 days 00:00:00"))]
-# ris_point=ris_point.loc[~(~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E","InPatient","I"]) & (ris_point['TAT']>"2 days 00:00:00"))]
 
 
 
