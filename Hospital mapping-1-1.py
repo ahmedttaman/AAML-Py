@@ -43,8 +43,8 @@ alyma_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\STAFF C2 7Sep.
 
 
 ###################PMAH clen and compine data######################################
-phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 May 24  to 12 Oct 24.xlsx")
-phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 May 24  to 12 Oct 24.xlsx")
+phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 May 24  to 20 Oct 24.xlsx")
+phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 May 24  to 20 Oct 24.xlsx")
 phma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -222,7 +222,7 @@ phah_all=phah_all.loc[~phah_all['PROCEDURE_KEY'] .isin( Old_data ['PROCEDURE_KEY
 
 ############################KFMC read data#############################
 
-kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__13 Oct _2024.xlsx")
+kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__20 10_20241020_1138.xlsx")
 
 
 
@@ -399,15 +399,15 @@ Radiolgistnames["KFMC2"]=Radiolgistnames["KFMC"].str.split('[').str[0].str.upper
 
 Radiolgistnames.fillna(0,inplace=True)
 kfmcrenamed["SIGNER_Name2"]=kfmcrenamed["SIGNER_Name"].map(Radiolgistnames[Radiolgistnames["KFMC2"]!=0].set_index("KFMC2")['Final unified list'])
-kfmcrenamed["Assigned Radiologist"]=kfmcrenamed["Assigned Radiologist"].str.strip().map(Radiolgistnames[Radiolgistnames["KFMC"]!=0].set_index("KFMC")['Final unified list'])
+kfmcrenamed["Assigned Radiologist"]=kfmcrenamed["Assigned Radiologist"].str.strip().map(Radiolgistnames[Radiolgistnames["KFMC2"]!=0].set_index("KFMC2")['Final unified list'])
 kfmcrenamed["Assistant"]=kfmcrenamed["Assistant"].map(Radiolgistnames[Radiolgistnames["KFMC2"]!=0].set_index("KFMC2")['Final unified list'])
 
 kfmcnew["Assistant"].value_counts()
 
 kfmcrenamed["Assistant"].value_counts()
 #kfmcrenamed["SIGNER_Name2"]=kfmcrenamed["SIGNER_Name"]
-
-
+kfmcrenamed.columns[50:70]
+aaxx=kfmcrenamed[['Assigned Radiologist','Assigned Physicians', 'Assigned Owners']]
 
 
 phah_combined.reset_index(inplace=True, drop=True)
@@ -415,7 +415,7 @@ kfmcrenamed.reset_index(inplace=True, drop=True)
 
 kfmcrenamed.info()
 
-
+kfmcrenamed_withouassigned=kfmcrenamed.loc[kfmcrenamed["Assigned Radiologist"].isnull()][['PROCEDURE_KEY','PROCEDURE_STATUS','Assigned Radiologist','Assigned Physicians', 'Assigned Owners']]
 KFMC_notmappedprocedires=kfmcrenamed.loc[kfmcrenamed['PROCEDURE_NAME_Nicp'].isnull()]['PROCEDURE_NAME'].value_counts().reset_index()
 
 phah_kfmc_combined= pd.concat([phah_all, kfmcrenamed], ignore_index=True,axis=0)  
@@ -435,8 +435,8 @@ kfmc_notmappedradio=kfmcrenamed.loc[(kfmcrenamed['SIGNER_Name2'].isnull())&(kfmc
 ################################# ِAl Yamamh###################
 ####modality to sction group, admission type 
 
-alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 13 Oct Exam.xlsx")
-alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 13 Oct Reported.xlsx")
+alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 20 Oct Exam.xlsx")
+alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 20 Oct Reported.xlsx")
 alyma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -624,7 +624,7 @@ phah_kfmc_yamamh= pd.concat([phah_kfmc_combined, alyma_all], ignore_index=True,a
 ####modality to sction group, admission type 
 
 
-alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Artawiah 06 Oct.xlsx")
+alartwiah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlArtwiah\Artawiah 01 May 20 Oct.xlsx")
 
 alartwiah.info()
 
@@ -729,7 +729,7 @@ Alartawyah_notmappedradio=alartwiahrenamed.loc[(alartwiahrenamed['SIGNER_Name2']
 ##### report status to study status 
 
 
-dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 MAY - 12 OCT.xlsx")
+dwadme = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1 MAY - 19 OCT.xlsx")
 dwadme.info()
 
 dwadme['Patient ID']=dwadme['Patient ID'].astype(str).str.split(pat=".").str[0]
@@ -814,6 +814,7 @@ invtest2=dwadme.loc[dwadme['Accession number']=="AlDawadmi_PRCA000000193299"]
 dawadmerenamed['Hospital']='Al Dawadmi'
 dawadmerenamed2=pd.concat([dawadmerenamed, Dwadme_new], ignore_index=True,axis=0)  
 
+dawadmerenamed2.loc[dawadmerenamed2['Assigned Radiologist'].isnull(),'Assigned Radiologist']=dawadmerenamed2['Assigned Physicians']
 #dawadmerenamed.to_excel(r"D:\AAML\CCC\Hospitals data\Dwadme\DAWADMI 1DEC-31JAN Ta.xlsx")
 
 ph_kf_yam_ar_dw= pd.concat([phah_kfmc_yamamh_ar, dawadmerenamed2], ignore_index=True,axis=0)  
@@ -827,7 +828,7 @@ dwadme_notmappedradio=dawadmerenamed.loc[(dawadmerenamed['SIGNER_Name2'].isnull(
 ##### report status to study status 
 
 
-zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 MAY - 12 OCT.xlsx")
+zulfi = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Zulfi\ZULFI 1 MAY - 19 OCT.xlsx")
 zulfi.info()
 zulfi=zulfi.drop_duplicates(['Accession number'],keep="last")
 
@@ -911,6 +912,10 @@ zulfirenamed2=pd.concat([zulfirenamed, AlZulfi_new], ignore_index=True,axis=0)
 
 
 zulfirenamed2=zulfirenamed2.drop_duplicates()
+zulfirenamed2=zulfirenamed2.loc[~zulfirenamed2['PAT_NAME'].str.contains("Test","Ghazi Alreshaid")]
+
+zulfirenamed2.loc[zulfirenamed2['Assigned Radiologist'].isnull(),'Assigned Radiologist']=zulfirenamed2['Assigned Physicians']
+
 
 ph_kf_yam_ar_dw_zu= pd.concat([ph_kf_yam_ar_dw, zulfirenamed2], ignore_index=True,axis=0)  
 
@@ -925,7 +930,7 @@ zulfi_notmappedradio=zulfirenamed.loc[(zulfirenamed['SIGNER_Name2'].isnull())&(z
 ###############################    Majmmah
 
 
-majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 MAY - 12 OCT.xlsx")
+majmmah = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Majmmah\MAJMAAH 1 MAY - 19 OCT.xlsx")
 
 
 
@@ -1009,6 +1014,7 @@ majmmahrenamed2=pd.concat([majmmahrenamed, Almajmah_new], ignore_index=True,axis
 
 majmmahrenamed2=majmmahrenamed2.drop_duplicates()
 
+majmmahrenamed2.loc[majmmahrenamed2['Assigned Radiologist'].isnull(),'Assigned Radiologist']=majmmahrenamed2['Assigned Physicians']
 
 
 ph_kf_yam_ar_dw_zu_mj2= pd.concat([ph_kf_yam_ar_dw_zu, majmmahrenamed2], ignore_index=True,axis=0)  
@@ -1063,7 +1069,7 @@ workbook.save(filename)
 
 # kfmc_MRI=ph_kf_yam_ar_dw_zu_mj.loc[(ph_kf_yam_ar_dw_zu_mj['Hospital']=='KFMC')&(ph_kf_yam_ar_dw_zu_mj['SECTION_CODE']=='MRI')]
 # kfmc_MRI.to_excel(r'D:\AAML\CCC\Hospitals data\kfmc_MRI'+datetime.today().strftime("%d %b, %Y")+'.xlsx', sheet_name = "All", index = False) 
-
+222
 # ph_kf_yam_ar_dw_zu_mj.to_excel(r'D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj'+datetime.today().strftime("%d %b, %Y")+'.xlsx', sheet_name = "All", index = False) 
 
 # print(datetime.now())
