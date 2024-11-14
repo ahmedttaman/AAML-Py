@@ -32,8 +32,8 @@ mapping = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Mapping\hospital mapping.xl
 
 procduremapping_points = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\NPHIES Points System modified 21-4-2024.xlsx",sheet_name="KFMC to NICIP to NPHIES Mapping")
 
-pmah_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All Staff 6 August .xlsx")
-alyma_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\STAFF C2 7Sep.xlsx",sheet_name="Sheet1")
+pmah_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\PMAH 10 Nov Staff .xlsx",sheet_name="Sheet1")
+alyma_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 10 Nov STAFF.xlsx",sheet_name="Sheet1")
 
 #procduremapping_points.info()
 
@@ -41,8 +41,8 @@ alyma_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\STAFF C2 7Sep.
 
 
 ###################PMAH clen and compine data######################################
-phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Sep 24  to 2 Nov 24.xlsx")
-phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Sep 24  to 2 Nov 24.xlsx")
+phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Sep 24  to 9 Nov 24.xlsx")
+phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Sep 24  to 9 Nov 24.xlsx")
 phma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -436,8 +436,8 @@ phah_kfmc_combined.info(50)
 ################################# ِAl Yamamh###################
 ####modality to sction group, admission type 
 
-alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 2 Nov Exam.xlsx")
-alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 2 Nov Reported.xlsx")
+alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 1 Sep to 9 Nov Exam.xlsx")
+alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 1 Sep to 09 Nov Reported.xlsx")
 alyma_rawperformed.info()
 
 ###  in performed but not in reported 

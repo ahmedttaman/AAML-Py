@@ -238,10 +238,10 @@ def er_reporting (radiologist,roasterradio,ris_point):
        if((datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date()>datetime.strptime('3/10/24', '%m/%d/%y').date())&(datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date()<datetime.strptime('4/9/24', '%m/%d/%y').date())):
 
 
-           cons=ris_point.loc[(ris_point['SIGNER_Name2']==radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())& (ris_point['PROCEDURE_END'].dt.time >time( hour=14,minute=59,second=59))&(ris_point['ADMISSION_TYPE']=='E')&(ris_point['Hospital_x'].isin(["PMAH","KFMC"]))]
+           cons=ris_point.loc[(ris_point['SIGNER_Name2']==radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())& (ris_point['PROCEDURE_END'].dt.time >time( hour=14,minute=59,second=59))&(ris_point['ADMISSION_TYPE']=='E')&(ris_point['Hospital'].isin(["PMAH","KFMC"]))]
            consappend=pd.concat([consappend,cons],ignore_index=True, sort=False)
        else:
-           cons=ris_point.loc[(ris_point['SIGNER_Name2']==radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())& (ris_point['PROCEDURE_END'].dt.time >time( hour=15,minute=59,second=59))&(ris_point['ADMISSION_TYPE']=='E')&(ris_point['Hospital_x'].isin(["PMAH","KFMC"]))]
+           cons=ris_point.loc[(ris_point['SIGNER_Name2']==radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split(',')[0].strip(),'%d/%m/%Y').date())& (ris_point['PROCEDURE_END'].dt.time >time( hour=15,minute=59,second=59))&(ris_point['ADMISSION_TYPE']=='E')&(ris_point['Hospital'].isin(["PMAH","KFMC"]))]
            consappend=pd.concat([consappend,cons],ignore_index=True, sort=False)
 
       

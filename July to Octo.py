@@ -258,9 +258,9 @@ ris_point.info()
 
 
 
-ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].astype(str)=='nan')),'Cons_point']=ris_point['point']
-ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Cons_point']=ris_point['point']*.6
-ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Assis_point']=ris_point['point']*.4
+ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].isnull())),'Cons_point']=ris_point['point']
+ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(~ris_point['Assistant'].isnull())),'Cons_point']=ris_point['point']*.6
+ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(~ris_point['Assistant'].isnull())),'Assis_point']=ris_point['point']*.4
 ris_point.loc[ris_point['Hospital']=='Al Artaweyyah','Hospital']='Al Artaweyah'
 ris_point.loc[ris_point['Hospital']=='Al Majmaah','Hospital']='Al Majmah'
 ris_point.info()
@@ -280,17 +280,26 @@ ris_point.loc[ris_point['RadISTec']==1,'Cons_point']=ris_point['Cons_point']*2
     
     
 
-ris_point['Hospital_Proc']=ris_point['Hospital']+"_"+ris_point['PROCEDURE_CODE']
+# ris_point['Hospital_Proc']=ris_point['Hospital']+"_"+ris_point['PROCEDURE_CODE']
 
-Reading_price['Hospital_Proc']=Reading_price['Hospital']+"_"+Reading_price['Procedure ID']
-Reading_price.drop_duplicates(['Hospital_Proc'],inplace=True)
-Reading_price['Old Reading Price']=Reading_price['Reading Price']
-Reading_price['Reading Price']=Reading_price['Old Reading Price']*.9
-ris_point=pd.merge(ris_point,Reading_price,on='Hospital_Proc',how='left')
+# Reading_price['Hospital_Proc']=Reading_price['Hospital']+"_"+Reading_price['Procedure ID']
+# Reading_price.drop_duplicates(['Hospital_Proc'],inplace=True)
+# Reading_price['Old Reading Price']=Reading_price['Reading Price']
+# Reading_price['Reading Price']=Reading_price['Old Reading Price']*.9
 
-ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].astype(str)=='nan')),'Cons_price']=ris_point['Reading Price']
-ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Cons_price']=ris_point['Reading Price']*.6
-ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Assis_price']=ris_point['Reading Price']*.4
+
+ris_point=pd.merge(ris_point,invoice,left_on='PROCEDURE_KEY',right_on='Acc_hospital',how='left')
+
+
+
+
+
+
+
+
+ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].isnull())),'Cons_price']=ris_point['Reading Price']
+ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(~ris_point['Assistant'].isnull())),'Cons_price']=ris_point['Reading Price']*.6
+ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(~ris_point['Assistant'].isnull())),'Assis_price']=ris_point['Reading Price']*.4
 
 
 
@@ -314,10 +323,10 @@ ris_point['SIGNER_Name2']=ris_point['SIGNER_Name2'].str.strip()
 
 
 
-radiolgist_time=ris_point.groupby(['SIGNER_Name2','SECTION_CODE'])['Hospital_x'].count()  
+radiolgist_time=ris_point.groupby(['SIGNER_Name2','SECTION_CODE'])['PROCEDURE_KEY'].count()  
 
-assistant_time=ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan'))].groupby(['Assistant','SECTION_CODE'])['Hospital_x'].count()  
-assistant_time=ris_point.groupby(['Assistant','SECTION_CODE'])['Hospital_x'].count()  
+assistant_time=ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan'))].groupby(['Assistant','SECTION_CODE'])['PROCEDURE_KEY'].count()  
+assistant_time=ris_point.groupby(['Assistant','SECTION_CODE'])['PROCEDURE_KEY'].count()  
 
 radiolgist_time.columns=['Radiologist','Modalitiy','Hospital','# Cases']
 radiolgist_time=radiolgist_time.reset_index()
@@ -452,10 +461,10 @@ for radiologist in radioglist_list:
   
   
   
-  final=allapend3.groupby(['Class','day']).agg({'Hospital_x':'count' ,'Earned_point':'sum','Accu_M_day':['max','count'],'Accu_M_end':'max'})
+  final=allapend3.groupby(['Class','day']).agg({'PROCEDURE_KEY':'count' ,'Earned_point':'sum','Accu_M_day':['max','count'],'Accu_M_end':'max'})
   final.columns = final.columns.map('_'.join).str.strip('_')
   final1= final.reset_index()
-  final2=allapend3.groupby(['Hospital_x','SECTION_CODE','day']).agg({'Hospital_x':'count' ,'Earned_point':'sum'})
+  final2=allapend3.groupby(['Hospital','SECTION_CODE','day']).agg({'PROCEDURE_KEY':'count' ,'Earned_point':'sum'})
   final2.columns = final2.columns.map('_'.join).str.strip('_')
   final2= final2.reset_index()
   final2['Radiolgist']=radiologist
@@ -476,20 +485,20 @@ for radiologist in radioglist_list:
   #allapend3.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Weekend '+radiologist+'.xlsx', sheet_name = "All", index = False) 
   
   
-  # i+=1
+  i+=1
   
   # # #  # if i > 1: 
   # # #  #   break
-  # if i > 32: 
+  if i > 7: 
   
-  #  break
+   break
 fin=pd.merge(radtotalpoints, roaster2,left_on='Radiolgist',right_on='Name',how="left")
 fin.info()
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
 fin['Overtime']=0
 fin.loc[fin['day']=='WeekDay','Overtime']=fin['total_point']-fin['total_required_point']
 fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_Sep_5Nov24.xlsx', sheet_name = "All", index = False)
-rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_Sep_5Nov24.xlsx', sheet_name = "All", index = False)
+rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_August_5Nov24.xlsx', sheet_name = "All", index = False)
 
 
 ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_March.xlsx', sheet_name = "All", index = False)
