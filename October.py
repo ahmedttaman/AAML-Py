@@ -1,30 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Nov  5 15:01:29 2024
+Created on Thu Nov 28 10:42:01 2024
 
 @author: Ahmad
 """
 
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jun  2 23:30:35 2024
-
-@author: Ahmedtaman
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Apr 23 20:07:29 2024
-
-@author: Ahmedtaman
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Feb  2 13:51:30 2024
-
-@author: Ahmedtaman
-"""
 
 import pandas as pd
 import numpy as np
@@ -46,7 +26,7 @@ ris1=pd.read_parquet(r'D:\AAML\CCC\Hospitals data\sample.parquet', engine='pyarr
 
 #invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Jul 2024 Procedures list_All Hospitals_v2.xlsx",sheet_name="Accessions")
 #invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Aug 2024 Procedures list_All Hospitals_v1.xlsx",sheet_name="Accessions")
-invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Sep 2024 Procedures list_All Hospitals_v2.xlsx",sheet_name="Accessions")
+invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Oct 2024 Procedures list_All Hospitals_v2.xlsx",sheet_name="Accessions")
 
 #invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - January 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
 # invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - March 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
@@ -67,7 +47,7 @@ Reading_price = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productiv
 
 #roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\RAD.DOC.-JULY 2024 PRODUCTIVITY.xlsx")
 #roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\Radiology Doctors AUGUST 2024 Productivity.xlsx")
-roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\Approved SEPTEMBER 2024 - Radiologist Productivity.xlsx")
+roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\Doctors October 2024 Productivity.xlsx")
 
 
 # roaster.columns=roaster.iloc[0]
@@ -133,10 +113,12 @@ roaster2=roaster2.drop_duplicates(['Name'])
 
 
 
-#check=ris.loc[ris['PROCEDURE_KEY']=="ALYMAMH_20002738"]
+check=ris.loc[ris['PROCEDURE_KEY']=="Al Yamamah_20173937"]
+check2=ris.loc[ris['Hospital']=="Al Artaweyyah"]
+
 ris=ris1.copy()
 ris.info()
-outprocedur=['XR INTRAOPERATIVE','XR Dental Panoramic','MRI Contrast Material','RAD OUTSIDE CD FOR REVIEW']
+outprocedur=['XR INTRAOPERATIVE','XR Dental Panoramic','MRI Contrast Material']
 ris=ris.loc[~ris['PROCEDURE_NAME'].isin(outprocedur)]
 
 ris['PROCEDURE_END']=pd.to_datetime(ris['PROCEDURE_END'],errors="coerce")
@@ -144,14 +126,18 @@ ris['REPORT_VERIFICATION_DATE']=pd.to_datetime(ris['REPORT_VERIFICATION_DATE'],e
 
 startstr='8/01/24 00:00:01'
 start = datetime.strptime(startstr, '%m/%d/%y %H:%M:%S')
-endstr='9/30/24 23:59:59'
+endstr='10/31/24 23:59:59'
 end = datetime.strptime(endstr, '%m/%d/%y %H:%M:%S')
 ris.loc[ris['Hospital']=='Al Artaweyyah','PROCEDURE_KEY']=ris['PROCEDURE_KEY'].str.replace('.0','')
 invoice['Acc_hospital']=invoice['Acc_hospital'].astype(str)
 ris['PROCEDURE_KEY']=ris['PROCEDURE_KEY'].astype(str)
 ris=ris.drop_duplicates(['PROCEDURE_KEY'])
 ris_dec=pd.DataFrame()
-ris_dec=ris.loc[ris['PROCEDURE_KEY'].isin(invoice['Acc_hospital'])]
+ris[['PROCEDURE_KEY2','PROCEDURE_KEY3']]=ris['PROCEDURE_KEY'].str.split("_", n=1, expand=True)
+ris.loc[ris['PROCEDURE_KEY3'].isnull(),'PROCEDURE_KEY3']=ris['PROCEDURE_KEY2']
+
+
+ris_dec=ris.loc[ris['PROCEDURE_KEY3'].str.upper().isin(invoice['Acc_hospital'].str.upper())]
 ris_dec=ris_dec.drop_duplicates()
 invtest=invoice.loc[~invoice['Acc_hospital'].isin(ris['PROCEDURE_KEY'])].dropna()
 ris_dec['Hospital'].value_counts()
@@ -171,7 +157,7 @@ EidEnd = date(2024,4,13)
 
 ris_dec.loc[(ris_dec['SIGNER_Name2']=='AHMAD ADNAN MOHAMMED ALDEREIHIM'),'SIGNER_Name2']='AHMED IBRAHIM ALDRAIHEM'
 
-ris_dec=ris_dec.iloc[:,0:70]
+#ris_dec=ris_dec.iloc[:,0:70]
 
 non_clinc_hours=0
 Baseline_Points_hour=4
@@ -288,7 +274,7 @@ ris_point.loc[ris_point['RadISTec']==1,'Cons_point']=ris_point['Cons_point']*2
 # Reading_price['Reading Price']=Reading_price['Old Reading Price']*.9
 
 
-ris_point=pd.merge(ris_point,invoice,left_on='PROCEDURE_KEY',right_on='Acc_hospital',how='left')
+ris_point=pd.merge(ris_point,invoice,left_on='PROCEDURE_KEY3',right_on='Acc_hospital',how='left')
 
 
 
@@ -485,13 +471,13 @@ for radiologist in radioglist_list:
   #allapend3.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Weekend '+radiologist+'.xlsx', sheet_name = "All", index = False) 
   
   
-  # i+=1
+  i+=1
   
   # # # # #  # if i > 1: 
   # # # # #  #   break
-  # if i > 62: 
+  if i > 51: 
   
-  #  break
+    break
 fin=pd.merge(radtotalpoints, roaster2,left_on='Radiolgist',right_on='Name',how="left")
 fin.info()
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
@@ -502,177 +488,3 @@ rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rads
 
 
 ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_Sep.xlsx', sheet_name = "All", index = False)
-
-# xx=ris_point.loc[ris_point['OPD'].isnull()]
-# xx=ris_point.loc[ris_point['OPD 2024'].isnull()]
-# xx=ris_point.loc[(ris_point['OPD 2024'].isnull())&(~ris_point['PROCEDURE_NAME'].isnull())]
-# xx=ris_point.loc[(ris_point['OPD 2024'].isnull())&(~ris_point['PROCEDURE_NAME_Nicp'].isnull())]
-
-# xxx=ris_point.loc[ris_point['SIGNER_Name2']=='Dr. Eman Abdelgadir']
-
-# ris_dec.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\InvoiceDec_data.xlsx', sheet_name = "All", index = False) 
-
-    
-    
-#     # Weekend cases
-#     radiologist='Dr.Muath Zaher Alyami'
-#     roastermuath=roaster2.loc[roaster2['Name']==radiologist]
-#     wdlist=roastermuath['Weekend Reporting   (Friday-Saturday)'].str.split('     ',expand=True).stack().str.strip().reset_index(drop=True)
-#     wdlist=wdlist[wdlist!='']
-#     for elment in wdlist:
-#         aa=ris_point.loc[(ris_point['SIGNER_Name2']==radiologist)& (ris_point['PROCEDURE_END'].dt.date==datetime.strptime( elment.split('-')[0].strip(),'%d/%m/%Y').date())]
-    
-    
-    
-#     weekendprocd=ris_point.loc[((ris_point['SIGNER_Name2']==radiologist)&(ris_point['Weekend']==1 ))]
-#     weekendprocd['Class']='Consultant'
-#     weekendprocd.rename(columns={'Cons_point':'Earned_point'},inplace=True)
-
-#     weekendprocd_assis=ris_point.loc[((ris_point['Assistant']==radiologist)&(ris_point['SIGNER_Name2']!=radiologist))&(ris_point['Weekend']==1 )]
-#     weekendprocd_assis['Class']='Assistant'
-#     weekendprocd_assis.rename(columns={'Assis_point':'Earned_point'},inplace=True)
-#     weekendall=pd.concat([weekendprocd, weekendprocd_assis], ignore_index=True, sort=False)
-#     weekendall.sort_values('REPORT_VERIFICATION_DATE')
-#     weekendall['Accu_point']=weekendall['Earned_point'].cumsum()
-#     weekendfin=weekendall.groupby(['Class']).agg({'Hospital':'count' ,'Earned_point':'sum'})
-#     weekendfin.reset_index(level=0, inplace=True)
-#     weekendfin['Day']='Weekend'
-#     weekendfin['Radiologist']=radiologist
-
-    
-
-#     # B-Shift 
-
-
-
-ris_point['report_verf_date2']=ris_point['REPORT_VERIFICATION_DATE'].dt.date
-test2=ris_point.loc[ris_point['SIGNER_Name2']=="Dr.Leena Kattan"].groupby(['SIGNER_Name2','SECTION_CODE','Hospital_x','ADMISSION_TYPE','report_verf_date2','PROCEDURE_NAME_Nicp']).agg({'PROCEDURE_KEY':'count' })
-test2=test2.reset_index()
-
-
-#     #Weekdays cases
-#     radiologistpro=ris_point.loc[(ris_point['SIGNER_Name2']==radiologist)&(ris_point['Weekend']!=1 )]
-#     radiologistpro['Class']='Consultant'
-#     radiologistpro.rename(columns={'Cons_point':'Earned_point'},inplace=True)
-    
-    
-#     assispro=ris_point.loc[((ris_point['Assistant']==radiologist)&(ris_point['SIGNER_Name2']!=radiologist))&(ris_point['Weekend']!=1 )]
-#     assispro['Class']='Assistant'
-#     assispro.rename(columns={'Assis_point':'Earned_point'},inplace=True)
-#     allprod=pd.concat([radiologistpro, assispro], ignore_index=True, sort=False)
-#     allprod.sort_values('REPORT_VERIFICATION_DATE')
-#     allprod['Accu_point']=allprod['Earned_point'].cumsum()
-#     allprodfin=allprod.groupby(['Class']).agg({'Hospital':'count' ,'Earned_point':'sum'})
-#     allprodfin.reset_index(level=0, inplace=True)
-
-#     allprodfin['Day']='Weekday'
-#     allprodfin['Radiologist']=radiologist
-#     allprodfin2=pd.concat([allprodfin,weekendfin], ignore_index=True, sort=False)
-
-
-
-#     i+=1
-    
-#     if i == 1: 
-#         break
-    
-#     radiolgist_group=radiolgist_time[radiolgist_time['SIGNER_Name2']==radiologist]
-#     radiolgist_group['per']=(radiolgist_group['Hospital']/radiolgist_group['Hospital'].sum())*100
-#     radiolgist_group['hours']=((21*8)*radiolgist_group['per'])/100
-#     radiolgist_group.loc[radiolgist_group['SECTION_CODE']=='X-Ray','expected']=(radiolgist_group['hours']*Baseline_Points_hour_xr)/7.5
-#     radiolgist_group.loc[radiolgist_group['SECTION_CODE']!='X-Ray','expected']=(radiolgist_group['hours']*Baseline_Points_hour)
-#     radiologistpro.loc[radiologistpro['Accu_point']>=radiolgist_group['expected'].sum(),'Hit Target']='Overtime'
-#     radiolgist_group.columns=['Radiologist','Modalitiy','# Cases','Moadlity %','Modality Month Hrs','Expected Points']
-#     # allproduc['Radiologist']=radiologist
-#     # allproduc['Total Point']=radiologistpro['point'].sum()
-#     # allproduc['Overtime Point']=radiologistpro['point'].sum()-672
-#     #allproduc.loc[dx] = [radiologist, radiologistpro['point'].sum(), radiologistpro['point'].sum()-672,'']
-#     total_point=radiologistpro['point'].fillna(0).sum()
-#     new_row={'Radiologist':radiologist,'Total Point':total_point,'Overtime Point':radiologistpro['point'].sum()-672,'Hit target Date':' '}
-#     allproduc=allproduc._append(new_row,ignore_index=True)
-#     #allproduc['Hit target Date']=radiologistpro['point']
-#     radiologistpro.iloc[0:0]
-#     radiolgist_group.iloc[0:0]
-    
-
-   
-
-#     i+=1
-    
-#     if i == 1: 
-#         break
-
-
-
-    
-# roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Updated ROTA names Dec & Jan 2024.xlsx")
-# roaster.columns=roaster.iloc[0]
-# roaster=roaster[2:]
-# roaster.info()
-# roaster.replace('____',np.nan ,inplace=True)
-# roaster.replace('__',np.nan,inplace=True)
-# roaster = roaster.dropna(subset=['ID No.'])
-# roaster['TOTAL ACTIVITIES']=roaster['TOTAL ACTIVITIES'].apply(lambda x: x if x >0 else 0)
-
-# roaster['workhours']=(roaster['No. of Workdays']*8)-roaster['TOTAL ACTIVITIES']
-# Radiolgistnames = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ALL RADIOLOGOSITS MAPPED NAMES v2.xlsx")
-# roaster2=pd.merge(roaster, Radiolgistnames,left_on=roaster['Name'].str.upper().apply(lambda x: x.replace(' ','')),right_on=Radiolgistnames['Final unified list'].astype(str).str.upper().apply(lambda x: x.replace(' ','')),how="left")
-
-# roaster2=roaster2.iloc[: , :-9]
-# educationhrs=56
-# eduocationnormalize=.675
-# monthworkdays=max(roaster2['No. of Workdays'])
-# roaster2.loc[roaster2['Category']=="Consultant",'educations_hrs']=(roaster2['No. of Workdays']*educationhrs)/monthworkdays
-# roaster2.loc[roaster2['Admin']==1,'admin_hrs']=roaster2['No. of Workdays']*8*.2
-# roaster2.fillna(0,inplace=True)
-# roaster2['net_report_hrs']=roaster2.workhours-roaster2.educations_hrs -roaster2.admin_hrs
-# roaster2['required_report_point']=roaster2.net_report_hrs*4
-# roaster2['required_eductio_point']=roaster2.educations_hrs *4*eduocationnormalize
-# roaster2['total_required_point']=roaster2.required_report_point +roaster2.required_eductio_point
-
-# roastermuath=roaster2.loc[roaster2['Name']=='Dr.Muath Zaher Alyami']
-# wdlist=roastermuath['Weekend Reporting   (Friday-Saturday)'].str.split('     ',expand=True).stack().str.strip().reset_index(drop=True)
-# wdlist=wdlist[wdlist!='']
-# for elment in wdlist:
-#     ris_point['SIGNER_Name2']
-
-# wd_dates = [element.split('-')[0] for element in wdlist]
-# wd_modality = [element.split('-')[1] for element in wdlist]
-
-# wdlist.info= list(filter(lambda x: x!=" ", wdlist))
-    
-# ristes=pd.merge(ris, roaster,left_on=ris['SIGNER_Name2'],right_on=roaster['Name'],how="left")
-
-# # roaster[['mod1','mode2']] = roaster["MODALITY"].str.split(",", n=1, expand=True)
-# # roaster['Weekend Reporting']=pd.to_datetime(roaster['Weekend Reporting']).dt.date
-# # cleaned1['PROCEDURE_END']=pd.to_datetime(cleaned1['PROCEDURE_END']).dt.date
-# # cleaned1['REPORT_VERIFICATION_DATE']=pd.to_datetime(cleaned1['REPORT_VERIFICATION_DATE']).dt.date
-
-# # cleaned1.to_excel(r'D:\AAML\CCC\Hospitals data\cleaned1'+datetime.today().strftime("%d %b, %Y")+'.xlsx', sheet_name = "All", index = False) 
-
-# #test=ph_kf_yam_ar_dw_zu_mj[ph_kf_yam_ar_dw_zu_mj['PROCEDURE_KEY']=="AlDawadmi_PRCA000000173471"]
-
-
-
-
-
-
-
-# ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Ris_point'+datetime.today().strftime("%d %b, %Y")+'.xlsx', sheet_name = "All", index = False) 
-
-
-# cleaned1_roast=pd.merge(cleaned1, roaster,left_on=['SIGNER_Name2','PROCEDURE_END'],right_on=['Name','Weekend Reporting']  ,how="left")
-
-
-# cleaned1_
-
-
-# ph_kf_yam_ar_dw_zu_mj['WeekEndProd']=ph_kf_yam_ar_dw_zu_mj.loc[(ph_kf_yam_ar_dw_zu_mj[''])]
-
-
-# roaster.columns=roaster.iloc[0]
-# roaster=roaster.drop(index=[0,1])
-# roaster.info()
-# ro=roaster['Weekend Reporting'].str.split('-',expand=True)
-
-# ph_kf_yam_ar_dw_zu_mj.loc[((ph_kf_yam_ar_dw_zu_mj['SIGNER_CODE'].isin(roaster['Name'])) & (ph_kf_yam_ar_dw_zu_mj['PROCEDURE_END'].isin(roaster['Weekend Reporting']))),"P_Type"]="Yes"
