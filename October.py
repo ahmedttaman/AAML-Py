@@ -124,7 +124,7 @@ ris=ris.loc[~ris['PROCEDURE_NAME'].isin(outprocedur)]
 ris['PROCEDURE_END']=pd.to_datetime(ris['PROCEDURE_END'],errors="coerce")
 ris['REPORT_VERIFICATION_DATE']=pd.to_datetime(ris['REPORT_VERIFICATION_DATE'],errors="coerce")
 
-startstr='8/01/24 00:00:01'
+startstr='10/01/24 00:00:01'
 start = datetime.strptime(startstr, '%m/%d/%y %H:%M:%S')
 endstr='10/31/24 23:59:59'
 end = datetime.strptime(endstr, '%m/%d/%y %H:%M:%S')
@@ -471,20 +471,20 @@ for radiologist in radioglist_list:
   #allapend3.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Weekend '+radiologist+'.xlsx', sheet_name = "All", index = False) 
   
   
-  i+=1
+  # i+=1
   
-  # # # # #  # if i > 1: 
-  # # # # #  #   break
-  if i > 51: 
+  # # # # # #  # if i > 1: 
+  # # # # # #  #   break
+  # if i > 51: 
   
-    break
+  #   break
 fin=pd.merge(radtotalpoints, roaster2,left_on='Radiolgist',right_on='Name',how="left")
 fin.info()
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
 fin['Overtime']=0
 fin.loc[fin['day']=='WeekDay','Overtime']=fin['total_point']-fin['total_required_point']
-fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_Sep_26Nov24.xlsx', sheet_name = "All", index = False)
-rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_Sep_26Nov24.xlsx', sheet_name = "All", index = False)
+fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_Oct_Dec24.xlsx', sheet_name = "All", index = False)
+rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_Oct_Dec24.xlsx', sheet_name = "All", index = False)
 
 
 ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_Sep.xlsx', sheet_name = "All", index = False)

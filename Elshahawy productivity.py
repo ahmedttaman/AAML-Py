@@ -24,50 +24,21 @@ import numpy as np
 from datetime import datetime, date
 import os
 import datetime as dt
-from ramadan_func import *
+from ramadan_func_July import *
+import pyarrow as pa
+import pyarrow.parquet as pq
 
 
 
 
-#############################master Tables
-
-# import calendar
-
-# def get_weekends(year, month):
-#     cal = calendar.Calendar(firstweekday=calendar.SUNDAY)
-#     month_matrix = cal.monthdatescalendar(year, month)
-    
-#     weekends = []
-#     for week in month_matrix:
-#         for day in week:
-#             if day.weekday() == calendar.FRIDAY or day.weekday() == calendar.SATURDAY:
-#                 weekends.append(day)
-    
-#     return weekends
-# weekend_dates=get_weekends(2023, 12)
 
 
-# import python_calamine
-# from python_calamine import CalamineWorkbook
-
-# workbook = CalamineWorkbook.from_path(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_19 May, 2024.xlsx")
-# workbook.sheet_names
-# # ["Sheet1", "Sheet2"]
-
-# recs: list[list]=workbook.get_sheet_by_name("ِAll").to_python()
-# ris1 = pd.DataFrame.from_records(recs)
-
-
-# new_header = ris1.iloc[0] #grab the first row for the header
-# ris1 = ris1[1:] #take the data less the header row
-# ris1.columns = new_header
-# ris2=ris1.head()
+ris1=pd.read_parquet(r'D:\AAML\CCC\Hospitals data\sample.parquet', engine='pyarrow')
 
 
 
 
 #ris = pd.read_csv(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj19 Feb, 2024.csv")
-ris1 = pd.read_excel(r"D:\AAML\CCC\Hospitals data\ph_kf_yam_ar_dw_zu_mj_18 Aug, 2024.xlsx")
 invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Jun 2024 Procedures list_All Hospitals_RF.xlsx",sheet_name="Accessions")
 #invoice = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Invoices\Reported Procedures - January 2024_PPP Radiology C2_AT.xlsx",sheet_name="Accessions")
 
@@ -81,12 +52,20 @@ point_map = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\
 
 Reading_price = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Reading Fee_ Jan.24 Invoice v1.xlsx",sheet_name="Reading_Master")
 
+master = pd.read_excel(r"C:\Users\Ahmad\Desktop\clincal cost\Model\CostAnalysis.xlsx")
+
+master=master.iloc[:,:8]   
+master=master.drop(['Salary_Code','Salary_Name',"Admin"],axis=1)
+master=master.drop_duplicates(['Master_Code'],keep='first')
+
+master=master.loc[(master!=0).all(axis=1)]
+                  
 
 #roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\Dec.2023-Productivity-FINAL.xlsx")
 
 #roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\JAN productivity-Final.xlsx")
 
-roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\JUNE 2024- AAML Radiology Doctors Productivity.xlsx")
+roaster = pd.read_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rota\JUNE 2024- AAML Radiology Doctors Productivity Final.xlsx")
 # roaster.columns=roaster.iloc[0]
 # roaster=roaster[1:]
 
@@ -153,57 +132,54 @@ roaster2=roaster2.drop_duplicates(['Name'])
 
 
 
+check=ris.loc[ris['PROCEDURE_KEY']=="Al Yamamah_20173937"]
+check2=ris.loc[ris['Hospital']=="Al Artaweyyah"]
+
 ris=ris1.copy()
-invtest2=ris1.loc[ris1['PROCEDURE_KEY']=="PRCA000000193299"]
-# ris.info()
-outprocedur=['XR INTRAOPERATIVE','XR Dental Panoramic','MRI Contrast Material','RAD OUTSIDE CD FOR REVIEW']
+ris.info()
+outprocedur=['XR INTRAOPERATIVE','XR Dental Panoramic','MRI Contrast Material']
 ris=ris.loc[~ris['PROCEDURE_NAME'].isin(outprocedur)]
 
 ris['PROCEDURE_END']=pd.to_datetime(ris['PROCEDURE_END'],errors="coerce")
 ris['REPORT_VERIFICATION_DATE']=pd.to_datetime(ris['REPORT_VERIFICATION_DATE'],errors="coerce")
 
-startstr='12/01/23 00:00:01'
+startstr='6/01/24 00:00:01'
 start = datetime.strptime(startstr, '%m/%d/%y %H:%M:%S')
-endstr='12/31/23 23:59:59'
-nationalday = date(2024,2,22)
-
+endstr='6/30/24 23:59:59'
 end = datetime.strptime(endstr, '%m/%d/%y %H:%M:%S')
 ris.loc[ris['Hospital']=='Al Artaweyyah','PROCEDURE_KEY']=ris['PROCEDURE_KEY'].str.replace('.0','')
+invoice['Acc_hospital']=invoice['Acc_hospital'].astype(str)
+ris['PROCEDURE_KEY']=ris['PROCEDURE_KEY'].astype(str)
+ris=ris.drop_duplicates(['PROCEDURE_KEY'])
+ris_dec=pd.DataFrame()
+ris[['PROCEDURE_KEY2','PROCEDURE_KEY3']]=ris['PROCEDURE_KEY'].str.split("_", n=1, expand=True)
+ris.loc[ris['PROCEDURE_KEY3'].isnull(),'PROCEDURE_KEY3']=ris['PROCEDURE_KEY2']
 
-ris_dec=ris.loc[ris['PROCEDURE_KEY'].isin(invoice['Acc_hospital'])]
-#invtest=invoice.loc[~invoice['Acc_hospital'].isin(ris['PROCEDURE_KEY'])].dropna()
+invoice['Acc_hospital']=invoice['Acc_hospital'].str.replace('.0','')
+
+ris_dec=ris.loc[ris['PROCEDURE_KEY3'].str.upper().isin(invoice['Acc_hospital'].str.upper())]
+ris_dec=ris_dec.drop_duplicates()
+invtest=invoice.loc[~invoice['Acc_hospital'].isin(ris['PROCEDURE_KEY'])].dropna()
+ris_dec['Hospital'].value_counts()
+
+EidStart = date(2024,6,14)
+EidEnd = date(2024,6,22)
+
+#ris_dec=ris_dec.loc[((ris_dec['PROCEDURE_END'].dt.date< EidStart)&(ris_dec['PROCEDURE_END'].dt.date> EidEnd)&(ris_dec['REPORT_VERIFICATION_DATE'].dt.date< EidStart)&(ris_dec['REPORT_VERIFICATION_DATE'].dt.date> EidEnd))]
 
 
 
-
-
-ris_dec_rabah=ris_dec.loc[((ris_dec['SIGNER_Name2']=='Dr. Ahmad AlRabah')|(ris_dec['Assistant']=='Dr. Ahmad AlRabah'))]
-
-ad=ris_dec_rabah['PROCEDURE_NAME'].value_counts().reset_index()
-ad.to_excel(r"D:\AAML\CCC\Hospitals data\Radiologist Productivity\rabah dec.xlsx")
-
-
-
-
-ris_dec=ris_dec.loc[((ris_dec['SIGNER_Name2']=='Dr. Hany Rafaat Elshalawy')|(ris_dec['Assistant']=='Dr. Hany Rafaat Elshalawy'))]
-
-
+ris_Eid=ris_dec.loc[(ris_dec['REPORT_VERIFICATION_DATE'].dt.date.between(EidStart,EidEnd))&(ris_dec['SIGNER_Name2']=='Dr. Ahmed Ibrahim Aldraihem')]
+#ris_Eid['Hospital'].value_counts()
+drx=ris_Eid.loc[ris_Eid['SIGNER_Name2']=='Dr. Ahmed Ibrahim Aldraihem']
 
 
 # ris_dec=ris.loc[(ris['PROCEDURE_END'].between(start,end))]
-#ris_dec=ris.loc[(ris['PROCEDURE_END'].between(start,end))&(ris['REPORT_VERIFICATION_DATE'].between(start,end))]
-ris_dec.loc[(ris_dec['SIGNER_Name2']=='AHMAD ADNAN MOHAMMED ALDEREIHIM'),'SIGNER_Name2']='AHMED IBRAHIM ALDRAIHEM'
-
-
-
-
-
-ris_dec=ris_dec.loc[((ris_dec['PROCEDURE_END'].dt.date!= nationalday)&(ris_dec['REPORT_VERIFICATION_DATE'].dt.date!= nationalday))]
-
+#ris_dec=ris_dec.loc[~(ris_dec['REPORT_VERIFICATION_DATE'].dt.date.between(EidStart,EidEnd))]
 
 ris_dec.loc[(ris_dec['SIGNER_Name2']=='AHMAD ADNAN MOHAMMED ALDEREIHIM'),'SIGNER_Name2']='AHMED IBRAHIM ALDRAIHEM'
 
-ris_dec=ris_dec.iloc[:,0:70]
+#ris_dec=ris_dec.iloc[:,0:70]
 
 non_clinc_hours=0
 Baseline_Points_hour=4
@@ -226,9 +202,8 @@ point_map["NICIP Examination Name2"]=point_map["NICIP Examination Name2"].apply(
 
 point_map=point_map.drop_duplicates(['NICIP Examination Name2'],keep="first")
 
-
-
 ris_point=pd.merge(ris_dec, point_map,left_on=['PROCEDURE_NAME_Nicp2'],right_on=['NICIP Examination Name2']  ,how="left")
+NotMappedPoint=ris_point.loc[ris_point['OPD 2024'].isnull()]
 # ris_point['scanday']=ris_point['PROCEDURE_END'].dt.dayofweek
 # ris_point['reportday']=ris_point['REPORT_VERIFICATION_DATE'].dt.dayofwee
 ris_point['scan_weekday']=""
@@ -283,41 +258,56 @@ ris_point.loc[(~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E","InPatient","I
 ris_point.loc[(~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E","InPatient","I"])&(ris_point['SECTION_CODE'].str not in normalized_modality)&(ris_point['Age']<=14)),'point']=Baseline_Points_hour/(ris_point['OPD 2024']*peditric_factor)
 ris_point.loc[(~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E","InPatient","I"])&(ris_point['SECTION_CODE']=="X-Ray")&(ris_point['Age']<=14)),'point']=(Baseline_Points_hour_xr/(ris_point['OPD 2024']*peditric_factor))/normlization_xr
 ris_point.loc[(~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E","InPatient","I"])&(ris_point['SECTION_CODE']=="Mamo")&(ris_point['Age']<=14)),'point']=(Baseline_Points_hour_mamo/(ris_point['OPD 2024']*peditric_factor))/normlization_mamo
+ris_point.info()
 
-ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].astype(str)=='nan')),'Cons_point']=ris_point['point']
-ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Cons_point']=ris_point['point']*.6
-ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Assis_point']=ris_point['point']*.4
+
+
+
+
+
+
+ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].isnull())),'Cons_point']=ris_point['point']
+ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(~ris_point['Assistant'].isnull())),'Cons_point']=ris_point['point']*.6
+ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(~ris_point['Assistant'].isnull())),'Assis_point']=ris_point['point']*.4
 ris_point.loc[ris_point['Hospital']=='Al Artaweyyah','Hospital']='Al Artaweyah'
 ris_point.loc[ris_point['Hospital']=='Al Majmaah','Hospital']='Al Majmah'
+ris_point.info()
+
+ris_point["Performing Technologist Name"]=ris_point["Performing Technologist Name"].str.upper()
+ris_point['RadISTec']=0
+    
+
+ris_point.loc[(ris_point['Hospital']=="Al Zulfi")&(~ris_point['PROCEDURE_NAME'].str.contains("Obstetric" ,na=False,case=False))&(ris_point['SIGNER_Name']==ris_point['Performing Technologist Name'])&(ris_point['SECTION_CODE']=='US'),'RadISTec']=1
+ris_point.loc[(ris_point['Hospital']=="Al Dawadmi")&(~ris_point['PROCEDURE_NAME'].str.contains("Obstetric", na=False,case=False))&(ris_point['SIGNER_Name']==ris_point['Performing Technologist Name'])&(ris_point['SECTION_CODE']=='US'),'RadISTec']=1
+ris_point.loc[(ris_point['Hospital']=="Al Yamamah")&(~ris_point['PROCEDURE_NAME'].str.contains("OBSTETRIC", na=False,case=False))&(ris_point['ADMISSION_TYPE'].isin(["E","I"]))&(ris_point['SECTION_CODE']=='US'),'RadISTec']=1
+ris_point.loc[ris_point['RadISTec']==1,'Cons_point']=ris_point['Cons_point']*2
+
+    
 
 
-ris_point['Hospital_Proc']=ris_point['Hospital']+"_"+ris_point['PROCEDURE_CODE']
+    
+    
 
-Reading_price['Hospital_Proc']=Reading_price['Hospital']+"_"+Reading_price['Procedure ID']
-Reading_price.drop_duplicates(['Hospital_Proc'],inplace=True)
-Reading_price['Old Reading Price']=Reading_price['Reading Price']
-Reading_price['Reading Price']=Reading_price['Old Reading Price']*.9
-ris_point=pd.merge(ris_point,Reading_price,on='Hospital_Proc',how='left')
+# ris_point['Hospital_Proc']=ris_point['Hospital']+"_"+ris_point['PROCEDURE_CODE']
 
-ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].astype(str)=='nan')),'Cons_price']=ris_point['Reading Price']
-ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Cons_price']=ris_point['Reading Price']*.6
-ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Assis_price']=ris_point['Reading Price']*.4
+# Reading_price['Hospital_Proc']=Reading_price['Hospital']+"_"+Reading_price['Procedure ID']
+# Reading_price.drop_duplicates(['Hospital_Proc'],inplace=True)
+# Reading_price['Old Reading Price']=Reading_price['Reading Price']
+# Reading_price['Reading Price']=Reading_price['Old Reading Price']*.9
 
 
-#ris_point['point']=ris_point.point.astype(float).round(1) 
+ris_point=pd.merge(ris_point,invoice,left_on='PROCEDURE_KEY3',right_on='Acc_hospital',how='left')
 
 
 
 
 
-# ris_point.loc[ris_point['ADMISSION_TYPE'].isin(['Emergency',"E"]),'WTime']=ris_point['READ_DATE']-ris_point['PROCEDURE_END']
-# ris_point.loc[~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E"]),'WTime']=ris_point['REPORT_VERIFICATION_DATE']-ris_point['PROCEDURE_END']
 
 
-# TAT applying
-# ris_point=ris_point.loc[~(ris_point['ADMISSION_TYPE'].isin(['Emergency',"E"]) & (ris_point['TAT']>"0 days 2:00:00"))]
-# ris_point=ris_point.loc[~(ris_point['ADMISSION_TYPE'].isin(["InPatient","I"]) & (ris_point['TAT']>"1 days 00:00:00"))]
-# ris_point=ris_point.loc[~(~ris_point['ADMISSION_TYPE'].isin(['Emergency',"E","InPatient","I"]) & (ris_point['TAT']>"2 days 00:00:00"))]
+
+ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].isnull())),'Cons_price']=ris_point['Reading Price']
+ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(~ris_point['Assistant'].isnull())),'Cons_price']=ris_point['Reading Price']*.6
+ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(~ris_point['Assistant'].isnull())),'Assis_price']=ris_point['Reading Price']*.4
 
 
 
@@ -332,6 +322,7 @@ ris_point['SIGNER_Name2']=ris_point['SIGNER_Name2'].str.strip()
 
 # RIS_GROUP=ris_point.groupby(['NICIP Examination Name','SECTION_CODE']).agg({'Hospital_x':'count' ,'OPD 2024':'max'}).reset_index()
 
+ris_point=pd.merge(ris_point,master,left_on='SIGNER_Name2',right_on='Master_Name',how='left')
 
 
 
@@ -340,18 +331,17 @@ ris_point['SIGNER_Name2']=ris_point['SIGNER_Name2'].str.strip()
 
 
 
+radiolgist_time=ris_point.groupby(['SIGNER_Name2','SECTION_CODE'])['PROCEDURE_KEY'].count()  
 
-radiolgist_time=ris_point.groupby(['SIGNER_Name2','SECTION_CODE'])['Hospital_x'].count()  
-
-assistant_time=ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan'))].groupby(['Assistant','SECTION_CODE'])['Hospital_x'].count()  
-assistant_time=ris_point.groupby(['Assistant','SECTION_CODE'])['Hospital_x'].count()  
+assistant_time=ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan'))].groupby(['Assistant','SECTION_CODE'])['PROCEDURE_KEY'].count()  
+assistant_time=ris_point.groupby(['Assistant','SECTION_CODE'])['PROCEDURE_KEY'].count()  
 
 radiolgist_time.columns=['Radiologist','Modalitiy','Hospital','# Cases']
 radiolgist_time=radiolgist_time.reset_index()
 
 radioglist_list=ris_point['SIGNER_Name2'].drop_duplicates().dropna()
 radioglist_list2=ris_point['Assistant'].drop_duplicates().dropna()
-radioglist_list=pd.concat([radioglist_list,radioglist_list2]).drop_duplicates().dropna()
+radioglist_list=pd.concat([radioglist_list,radioglist_list2]).str.strip().drop_duplicates().dropna()
 
 
 radioglist_list.index=radioglist_list[:]
@@ -380,10 +370,10 @@ for radiologist in radioglist_list:
   roasterradio=roaster2.loc[roaster2['Name'].astype(str).str.upper().apply(lambda x: x.replace(' ',''))==radiologist.upper().replace(' ','')]
   
   # Week days
-  cons2=ris_point.loc[(ris_point['SIGNER_Name2'].astype(str).str.upper().apply(lambda x: x.replace(' ',''))==radiologist.upper().replace(' ',''))]
+  cons2=ris_point.loc[(ris_point['SIGNER_Name2'].astype(str).str.upper().apply(lambda x: x.replace(' ',''))==radiologist.upper().replace(' ',''))&(~ris_point['REPORT_VERIFICATION_DATE'].dt.date.between(EidStart,EidEnd))]
   consappend2=pd.concat([consappend2,cons2],ignore_index=True, sort=False)
   
-  assis2=ris_point.loc[(ris_point['Assistant'].astype(str).str.upper().apply(lambda x: x.replace(' ',''))==radiologist.upper().replace(' ',''))&(ris_point['SIGNER_Name2'].astype(str).str.upper().apply(lambda x: x.replace(' ',''))!=radiologist.upper().replace(' ',''))]
+  assis2=ris_point.loc[(ris_point['Assistant'].astype(str).str.upper().apply(lambda x: x.replace(' ',''))==radiologist.upper().replace(' ',''))&(ris_point['SIGNER_Name2'].astype(str).str.upper().apply(lambda x: x.replace(' ',''))!=radiologist.upper().replace(' ',''))&(~ris_point['REPORT_VERIFICATION_DATE'].dt.date.between(EidStart,EidEnd))]
   assisappend2=pd.concat([assisappend2,assis2],ignore_index=True, sort=False)
   
   
@@ -399,7 +389,8 @@ for radiologist in radioglist_list:
       thursday=thursday_afterhours(radiologist, roasterradio, ris_point)
       er_reportinf=er_reporting(radiologist, roasterradio, ris_point)
       extra_shifts=extrashifts_assist(radiologist, roasterradio, ris_point)
-      Overtime=pd.concat([allapend,thursday,er_reportinf,extra_shifts]) 
+      Eidjune=Eid_june(radiologist, roasterradio, ris_point)
+      Overtime=pd.concat([allapend,thursday,er_reportinf,extra_shifts,Eidjune]) 
 
 
   else:
@@ -440,11 +431,15 @@ for radiologist in radioglist_list:
   
   
   overtime_classes=['WeekEnd','Thursday_afterHours','Extra Shifts','ER REPORTING']
+  Overtime.drop_duplicates(['PROCEDURE_KEY'],inplace=True)
+
   if(len(Overtime)>0):
       Overtime.loc[Overtime['day']=='WeekEnd','Accu_M_end']=Overtime.loc[Overtime['day'] =='WeekEnd', 'Earned_M'].cumsum()
       Overtime.loc[Overtime['day']=='Thursday_afterHours','Accu_M_end']=Overtime.loc[Overtime['day'] =='Thursday_afterHours', 'Earned_M'].cumsum()
       Overtime.loc[Overtime['day']=='Extra Shifts','Accu_M_end']=Overtime.loc[Overtime['day'] =='Extra Shifts', 'Earned_M'].cumsum()
       Overtime.loc[Overtime['day']=='ER REPORTING','Accu_M_end']=Overtime.loc[Overtime['day'] =='ER REPORTING', 'Earned_M'].cumsum()
+      Overtime.loc[Overtime['day']=='Eid Cases','Accu_M_end']=Overtime.loc[Overtime['day'] =='Eid Cases', 'Earned_M'].cumsum()
+
   else:
        Overtime['Accu_M_end']=0
       
@@ -479,10 +474,10 @@ for radiologist in radioglist_list:
   
   
   
-  final=allapend3.groupby(['Class','day']).agg({'Hospital_x':'count' ,'Earned_point':'sum','Accu_M_day':['max','count'],'Accu_M_end':'max'})
+  final=allapend3.groupby(['Class','day']).agg({'PROCEDURE_KEY':'count' ,'Earned_point':'sum','Accu_M_day':['max','count'],'Accu_M_end':'max'})
   final.columns = final.columns.map('_'.join).str.strip('_')
   final1= final.reset_index()
-  final2=allapend3.groupby(['Hospital_x','SECTION_CODE','day']).agg({'Hospital_x':'count' ,'Earned_point':'sum'})
+  final2=allapend3.groupby(['Hospital','SECTION_CODE','day']).agg({'PROCEDURE_KEY':'count' ,'Earned_point':'sum'})
   final2.columns = final2.columns.map('_'.join).str.strip('_')
   final2= final2.reset_index()
   final2['Radiolgist']=radiologist
@@ -491,7 +486,7 @@ for radiologist in radioglist_list:
 
   final1['Radiolgist']=radiologist
   
-  
+  mus=ris_dec.loc[ris_dec['SIGNER_Name2']=='Dr. Moustafa Gaber']
   
   
   
@@ -500,26 +495,23 @@ for radiologist in radioglist_list:
   radtotalpoints['Month']=end
   rad_hos_moda['Month']=end
 
-  
   #allapend3.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Weekend '+radiologist+'.xlsx', sheet_name = "All", index = False) 
   
   
-  # i+=1
+  i+=1
   
-  # # #  # if i > 1: 
-  # # #  #   break
-  # if i > 32: 
+  # # # # # # #  # if i > 1: 
+  # # # # # # #  #   break
+  if i > 10: 
   
-  #  break
-
-mm=ris_point['SIGNER_Name2'].value_counts()
+      break
 fin=pd.merge(radtotalpoints, roaster2,left_on='Radiolgist',right_on='Name',how="left")
-# fin.info()
+fin.info()
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
 fin['Overtime']=0
 fin.loc[fin['day']=='WeekDay','Overtime']=fin['total_point']-fin['total_required_point']
-fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_May_27August.xlsx', sheet_name = "All", index = False)
-rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_May_27August.xlsx', sheet_name = "All", index = False)
+fin.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radpoins_June_Dec24.xlsx', sheet_name = "All", index = False)
+rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Radstats_June_Dec24.xlsx', sheet_name = "All", index = False)
 
 
 ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_jan2.xlsx', sheet_name = "All", index = False)

@@ -293,13 +293,15 @@ ris_point.loc[ris_point['RadISTec']==1,'Cons_point']=ris_point['Cons_point']*2
     
     
 
-ris_point['Hospital_Proc']=ris_point['Hospital']+"_"+ris_point['PROCEDURE_CODE']
+# ris_point['Hospital_Proc']=ris_point['Hospital']+"_"+ris_point['PROCEDURE_CODE']
 
-Reading_price['Hospital_Proc']=Reading_price['Hospital']+"_"+Reading_price['Procedure ID']
-Reading_price.drop_duplicates(['Hospital_Proc'],inplace=True)
-Reading_price['Old Reading Price']=Reading_price['Reading Price']
-Reading_price['Reading Price']=Reading_price['Old Reading Price']*.9
-ris_point=pd.merge(ris_point,Reading_price,on='Hospital_Proc',how='left')
+# Reading_price['Hospital_Proc']=Reading_price['Hospital']+"_"+Reading_price['Procedure ID']
+# Reading_price.drop_duplicates(['Hospital_Proc'],inplace=True)
+# Reading_price['Old Reading Price']=Reading_price['Reading Price']
+# Reading_price['Reading Price']=Reading_price['Old Reading Price']*.9
+# ris_point=pd.merge(ris_point,Reading_price,on='Hospital_Proc',how='left')
+ris_point=pd.merge(ris_point,invoice,left_on='PROCEDURE_KEY',right_on='Acc_hospital',how='left')
+
 
 ris_point.loc[ ((ris_point['SIGNER_Name2']==ris_point['Assistant'])|(ris_point['Assistant'].astype(str)=='nan')),'Cons_price']=ris_point['Reading Price']
 ris_point.loc[ ((ris_point['SIGNER_Name2']!=ris_point['Assistant'])&(ris_point['Assistant'].astype(str)!='nan')),'Cons_price']=ris_point['Reading Price']*.6

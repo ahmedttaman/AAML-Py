@@ -41,8 +41,8 @@ alyma_stafff= pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 10 Nov STAF
 
 
 ###################PMAH clen and compine data######################################
-phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 01 Sep 2024 to 16 Nov 2024.xlsx")
-phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 01 Sep 2024 to 16 Nov 2024 .xlsx")
+phma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All performed PMAH 1 Sep 24 to 08 Dec 24.xlsx")
+phma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\PMAH\All reported PMAH 1 Sep 24  to 08 Dec 24.xlsx")
 phma_rawperformed.info()
 
 ###  in performed but not in reported 
@@ -225,7 +225,7 @@ phah_all=phah_all.loc[~phah_all['PROCEDURE_KEY'] .isin( Old_data ['PROCEDURE_KEY
 
 ############################KFMC read data#############################
 
-kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Template__01 Sep 2024 to 16 Nov 2024.xlsx")
+kfmcnew = pd.read_excel(r"D:\AAML\CCC\Hospitals data\KFMC\Imaging_Master_Status_Dec 8_2024.xlsx")
 
 
 
@@ -438,8 +438,8 @@ phah_kfmc_combined.info(50)
 ################################# ِAl Yamamh###################
 ####modality to sction group, admission type 
 
-alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 01 Sep 2024 to 16 Nov 2024 Exam.xlsx")
-alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 01 Sep 2024 to 16 Nov 2024 Reported.xlsx")
+alyma_rawperformed = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 2 Nov Exam 01 Sep 2024 to 08 Dec 2024.xlsx")
+alyma_rawreported = pd.read_excel(r"D:\AAML\CCC\Hospitals data\AlYamamh\C2 2 Nov Reported 01 Sep 2024 to 08 Dec 2024.xlsx")
 alyma_rawperformed.info()
 
 ###  in performed but not in reported 

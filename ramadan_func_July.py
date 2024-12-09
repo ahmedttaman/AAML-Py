@@ -112,6 +112,9 @@ def weekend (radiologist,roasterradio,ris_point):
 
 
 
+
+
+
 def thursday_afterhours (radiologist,roasterradio,ris_point):
     consappend=pd.DataFrame()
     assisappend=pd.DataFrame()
@@ -257,4 +260,67 @@ def er_reporting (radiologist,roasterradio,ris_point):
 
     
     allapend['day']='ER REPORTING'
+    return allapend
+
+def Eid_june (radiologist,roasterradio,ris_point):
+    EidStart = date(2024,6,14)
+    EidEnd = date(2024,6,22)
+    Eid_Hospitals=['KFMC','PMAH']
+    NotEid_department=['Nuclear Medicine','PediatricsRadiology']
+
+    #ris_dec=ris_dec.loc[((ris_dec['PROCEDURE_END'].dt.date< EidStart)&(ris_dec['PROCEDURE_END'].dt.date> EidEnd)&(ris_dec['REPORT_VERIFICATION_DATE'].dt.date< EidStart)&(ris_dec['REPORT_VERIFICATION_DATE'].dt.date> EidEnd))]
+
+
+
+    ris_Eid=ris_point.loc[(ris_point['REPORT_VERIFICATION_DATE'].dt.date.between(EidStart,EidEnd))]
+
+    consappend=pd.DataFrame()
+    assisappend=pd.DataFrame()
+
+    # print(len(roasterradio))
+    # print(len(str(roasterradio.iloc[0, 10])))
+    # xx=roasterradio['Extra Shifts for  Assistant'].reset_index()
+    # leng=xx.iloc[0:0]
+    # #print(len(roasterradio.iloc[0, 9]))
+   
+        
+    # roasterradio['Extra Shifts for  Assistant'] = roasterradio['Extra Shifts for  Assistant'].astype(str)
+    # wdlist=roasterradio['Extra Shifts for  Assistant'].str.split('     ',expand=True).stack().str.strip().reset_index(drop=True) 
+    # wdlist=wdlist[wdlist!='___']
+    # wdlist=wdlist[wdlist!='']
+    
+    # wdlist=wdlist[wdlist!='_____']
+    
+    # if((len(str(roasterradio.iloc[0, 10]))>5)):
+    cons=ris_Eid.loc[(ris_Eid['SIGNER_Name2']==radiologist)&(ris_Eid['Main_Hospital'].isin(Eid_Hospitals))&(~ris_Eid['Department'].isin(NotEid_department))]
+    consappend=pd.concat([consappend,cons],ignore_index=True, sort=False)
+    
+    assis=ris_Eid.loc[(ris_Eid['Assistant']==radiologist)&(ris_Eid['SIGNER_Name2']!=radiologist)&(ris_Eid['Main_Hospital'].isin(Eid_Hospitals))&(~ris_Eid['Department'].isin(NotEid_department))]
+    assisappend=pd.concat([assisappend,assis],ignore_index=True, sort=False)
+
+       
+           
+       
+       
+       
+      
+       
+    
+    
+    consappend['Class']='solo management'
+    consappend.rename(columns={'Cons_point':'Earned_point'},inplace=True)
+    consappend.rename(columns={'Cons_price':'Earned_M'},inplace=True)
+
+    assisappend['Class']='Under Supervision'
+    assisappend.rename(columns={'Assis_point':'Earned_point'},inplace=True)
+    assisappend.rename(columns={'Assis_price':'Earned_M'},inplace=True)
+    print(len(assisappend))
+    if(len(assisappend)>0):
+        allapend=pd.concat([consappend,assisappend])
+    else:
+        allapend=consappend
+
+
+    
+    allapend['day']='Eid Cases'
     return allapend
