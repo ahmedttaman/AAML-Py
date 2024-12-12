@@ -113,8 +113,6 @@ roaster2=roaster2.drop_duplicates(['Name'])
 
 
 
-check=ris.loc[ris['PROCEDURE_KEY']=="Al Yamamah_20173937"]
-check2=ris.loc[ris['Hospital']=="Al Artaweyyah"]
 
 ris=ris1.copy()
 ris.info()
@@ -471,13 +469,13 @@ for radiologist in radioglist_list:
   #allapend3.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Weekend '+radiologist+'.xlsx', sheet_name = "All", index = False) 
   
   
-  # i+=1
+  i+=1
   
   # # # # # #  # if i > 1: 
   # # # # # #  #   break
-  # if i > 51: 
+  if i > 18: 
   
-  #   break
+     break
 fin=pd.merge(radtotalpoints, roaster2,left_on='Radiolgist',right_on='Name',how="left")
 fin.info()
 fin.rename(columns={'Hospital_x_count':'no._cases','Earned_point_sum':'total_point','Accu_M_day_max':'Ot_weekday_sr','Accu_M_day_count':'ot_weekday_cases','Accu_M_end_max':'Ot_weekend_sr',},inplace=True)
@@ -488,3 +486,4 @@ rad_hos_moda.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Rads
 
 
 ris_point.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\risall_Sep.xlsx', sheet_name = "All", index = False)
+allapend3.to_excel(r'D:\AAML\CCC\Hospitals data\Radiologist Productivity\Aijaz Rawa October.xlsx', sheet_name = "All", index = False)
